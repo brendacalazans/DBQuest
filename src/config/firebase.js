@@ -14,6 +14,8 @@ import {
     signInWithEmailAndPassword,
     GoogleAuthProvider,
     signInWithPopup,
+    signInWithRedirect, // <-- ADICIONE AQUI
+    getRedirectResult,  // <-- ADICIONE AQUI
     updateProfile,
     signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -52,6 +54,8 @@ window.FB = {
     signInWithEmailAndPassword, 
     GoogleAuthProvider, 
     signInWithPopup,
+    signInWithRedirect, // <-- ADICIONE AQUI
+    getRedirectResult,  // <-- ADICIONE AQUI
     updateProfile, 
     signOut, 
     ref, 
@@ -80,4 +84,3 @@ export {
     increment,
     get
 };
-
