@@ -1369,13 +1369,8 @@
                 setCurrentView('practice');
             } else if (lesson.type === 'theory') { // <-- ESPECIFICADO
                 setCurrentView('lesson');
-            } else if (lesson.type === 'lesson') { // <-- ESPECIFICADO (Vídeo)
-                // ATENÇÃO: Você não tem uma 'VideoView'. 
-                // Enviar para 'lesson' (quiz) ou 'article' (texto) vai quebrar.
-                // Por enquanto, vou enviar para 'article' para não quebrar a app,
-                // mas ele não renderizará o vídeo.
-                console.warn("VideoView não implementada. Abrindo como Artigo.");
-                setCurrentView('article'); 
+} else if (lesson.type === 'lesson') {
+                setCurrentView('video');
             } else {
                 // Fallback para tipos desconhecidos
                 setCurrentView('home');
@@ -1737,7 +1732,54 @@
             );
         });
         
-        const ArticleView = memo(({ currentLesson, onComplete, onBack }) => {
+        // --- COMPONENTE PARA VÍDEOS ---
+    const VideoView = memo(({ currentLesson, onComplete, onBack }) => {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col animate-fade-in">
+                <header className="bg-white/10 border-b border-white/20">
+                    <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
+                        <button onClick={onBack} className="text-white/80 hover:text-white"><ArrowLeft/></button>
+                        <div className="w-full bg-white/20 h-4 rounded-full"><div className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" style={{width: '100%'}} /></div>
+                    </div>
+                </header>
+                <main className="max-w-4xl mx-auto px-6 py-8 flex-1">
+                    <h2 className="text-3xl font-bold mb-6">{currentLesson.title}</h2>
+                    {currentLesson.videoId && (
+                        <div className="aspect-video bg-black rounded-xl overflow-hidden mb-6">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src={`https://www.youtube.com/embed/${currentLesson.videoId}`}
+                                title={currentLesson.title}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    )}
+                    {currentLesson.content && (
+                        <div className="prose prose-invert prose-lg text-white/90 max-w-none space-y-4">
+                            {currentLesson.content ? currentLesson.content.split('\n\n').map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
+                            )) : <p>Conteúdo não disponível.</p>}
+                        </div>
+                    )}
+                </main>
+                <footer className="bg-white/10 border-t border-white/20 p-6 sticky bottom-0">
+                    <div className="max-w-4xl mx-auto">
+                        <button
+                            onClick={onComplete}
+                            className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform"
+                        >
+                            Concluir Aula
+                        </button>
+                    </div>
+                </footer>
+            </div>
+        );
+    });
+    
+    const ArticleView = memo(({ currentLesson, onComplete, onBack }) => {
             return (
                 <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col animate-fade-in">
                     <header className="bg-white/10 border-b border-white/20">
@@ -1749,9 +1791,9 @@
                     <main className="max-w-4xl mx-auto px-6 py-8 flex-1">
                         <h2 className="text-3xl font-bold mb-6">{currentLesson.title}</h2>
                         <div className="prose prose-invert prose-lg text-white/90 max-w-none space-y-4">
-                            {currentLesson.content.split('\n\n').map((paragraph, index) => (
+                            {currentLesson.content ? currentLesson.content.split('\n\n').map((paragraph, index) => (
                                 <p key={index}>{paragraph}</p>
-                            ))}
+                            )) : <p>Conteúdo não disponível.</p>}
                         </div>
                     </main>
                     <footer className="bg-white/10 border-t border-white/20 p-6 sticky bottom-0">
@@ -2303,6 +2345,7 @@
             switch (currentView) {
                 case 'home': return <HomeView userProgress={userProgress} studyTrails={studyTrails} onSelectTrail={handleSelectTrail} onGenerateChallenge={generateSqlChallenge} />;
                 case 'trailDetail': return <TrailDetailView selectedTrail={selectedTrail} userProgress={userProgress} onStartLesson={startLesson} onBack={handleBackToTrails} getContentTypeInfo={getContentTypeInfo} filterType={filterType} onFilterChange={setFilterType} />;
+                case 'video': return <VideoView currentLesson={currentLesson} onComplete={handleArticleCompletion} onBack={() => setCurrentView('trailDetail')} />;
                 case 'article': return <ArticleView currentLesson={currentLesson} onComplete={handleArticleCompletion} onBack={() => setCurrentView('trailDetail')} />;
                 case 'lesson': return <LessonView currentLesson={currentLesson} currentQuestion={currentQuestion} userProgress={userProgress} onCheckAnswer={checkAnswer} onNextQuestion={nextQuestion} onNavigate={handleNavigate} showResult={showResult} answeredQuestions={answeredQuestions} selectedAnswer={selectedAnswer} setSelectedAnswer={setSelectedAnswer} onGetAiExplanation={getAiExplanation} aiExplanation={aiExplanation} isAiExplanationLoading={isAiExplanationLoading} />;
                 
@@ -2434,171 +2477,109 @@
         );
     });
 
-    // --- COMPONENTE PARA EXERCÍCIOS PRÁTICOS (TERMINAL SQL MELHORADO) ---
+    // --- NOVO COMPONENTE PARA EXERCÍCIOS PRÁTICOS ---
     const PracticeView = memo(({ currentLesson, userProgress, onNavigate, onPracticeComplete }) => {
-        const [userQuery, setUserQuery] = useState('');
+        const [userQueryParts, setUserQueryParts] = useState([]);
         const [showResult, setShowResult] = useState(false);
-        const [feedbackMessage, setFeedbackMessage] = useState('');
-        const [feedbackType, setFeedbackType] = useState('');
 
-        const progress = showResult ? 100 : 0;
+        // Progresso simples (ou está 0% ou 100%)
+        const progress = showResult ? 100 : 0; 
         
+        // Normaliza a query para comparação (remove espaços extras, ponto e vírgula final, e ignora maiúsculas/minúsculas)
         const normalizeQuery = (query) => {
             if (!query) return "";
             return query.replace(/;$/, '').replace(/\s+/g, ' ').trim().toLowerCase();
         };
         
-        const isCorrect = normalizeQuery(userQuery) === normalizeQuery(currentLesson.correctQuery);
-
-        const addToQuery = (text) => {
-            const currentValue = userQuery.trim();
-            if (currentValue === '') {
-                setUserQuery(text);
-            } else {
-                const needsSpace = currentValue.length > 0 && !currentValue.endsWith(' ');
-                setUserQuery(currentValue + (needsSpace ? ' ' : '') + text);
-            }
-        };
-
-        const clearQuery = () => {
-            setUserQuery('');
-            setFeedbackMessage('');
-        };
+        const builtQuery = userQueryParts.join(' ');
+        const isCorrect = normalizeQuery(builtQuery) === normalizeQuery(currentLesson.correctQuery);
 
         const handleCheck = () => {
-            if (!userQuery.trim()) {
-                setFeedbackMessage('Digite uma consulta SQL primeiro.');
-                setFeedbackType('warning');
-                return;
-            }
-
-            if (isCorrect) {
-                setFeedbackMessage('Perfeito! Sua consulta está correta.');
-                setFeedbackType('success');
-            } else {
-                provideFeedback(normalizeQuery(userQuery));
-                setFeedbackType('error');
-            }
-            
+            // Apenas exibe o resultado. A lógica de vidas/conclusão
+            // acontece no 'handleContinue' (chamando onPracticeComplete)
             setShowResult(true);
         };
-
-        const provideFeedback = (query) => {
-            const correctNormalized = normalizeQuery(currentLesson.correctQuery);
-            
-            if (!query.includes('select')) {
-                setFeedbackMessage('Você precisa usar o comando SELECT para selecionar dados.');
-            } else if (!query.includes('from')) {
-                setFeedbackMessage('Você precisa usar FROM para especificar a tabela.');
-            } else if (query.length < correctNormalized.length * 0.5) {
-                setFeedbackMessage('Sua consulta parece incompleta. Verifique se incluiu todos os elementos necessários.');
-            } else {
-                setFeedbackMessage(`Não foi dessa vez. A consulta correta é: ${currentLesson.correctQuery}`);
-            }
-        };
-
+        
         const handleContinue = () => {
+            // Informa o App (componente pai) se o usuário acertou ou errou
             onPracticeComplete(isCorrect);
         };
-
-        const handleKeyPress = (e) => {
-            if (e.key === 'Enter' && !showResult && userQuery.trim()) {
-                handleCheck();
-            }
+        
+        const handlePartClick = (part) => {
+            setUserQueryParts(prev => [...prev, part]);
+        };
+        
+        const handleUndo = () => {
+            setUserQueryParts(prev => prev.slice(0, -1));
         };
 
         return (
             <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col">
                 <header className="bg-white/10 border-b border-white/20">
                     <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => onNavigate('trailDetail')} className="text-white/80 hover:text-white transition-colors" aria-label="Voltar"><X /></button>
-                        <div className="w-full bg-white/20 h-4 rounded-full overflow-hidden">
-                            <div className="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
-                        </div>
-                        <div className="flex items-center gap-2 text-red-400"><Heart /><span className="font-bold">{userProgress.lives}</span></div>
+                        <button onClick={() => onNavigate('trailDetail')} className="text-white/80 hover:text-white"><X/></button>
+                        <div className="w-full bg-white/20 h-4 rounded-full"><div className="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-300" style={{width: `${progress}%`}} /></div>
+                        <div className="flex items-center gap-2 text-red-400"> <Heart /> <span className="font-bold">{userProgress.lives}</span> </div>
                     </div>
                 </header>
-           
+               
                 <main className="max-w-4xl mx-auto px-6 py-8 flex-1 w-full">
                     <h2 className="text-2xl md:text-3xl font-bold mb-4">{currentLesson.title}</h2>
                     <p className="text-lg text-white/80 mb-6">{currentLesson.description}</p>
                     
                     <div className="bg-black/20 p-4 rounded-xl border border-white/10 mb-6">
-                        <h3 className="text-sm text-white/70 mb-2">📋 Schema da Tabela:</h3>
-                        <pre className="bg-black/30 p-4 rounded-lg text-sm text-cyan-300 font-mono whitespace-pre-wrap overflow-x-auto"><code>{currentLesson.schema}</code></pre>
+                        <h3 className="text-sm text-white/70 mb-2">Schema da Tabela:</h3>
+                        <pre className="bg-black/30 p-4 rounded-lg text-sm text-cyan-300 font-mono whitespace-pre-wrap"><code>{currentLesson.schema}</code></pre>
                     </div>
 
-                    <div className="sql-terminal-panel mb-6">
-                        <div className="sql-terminal-header">
-                            <div className="terminal-controls">
-                                <div className="control-dot close"></div>
-                                <div className="control-dot minimize"></div>
-                                <div className="control-dot maximize"></div>
-                            </div>
-                            <div className="terminal-title">SQL Terminal v2.0</div>
-                        </div>
+                    {/* Query constructor */}
+                    <h3 className="text-sm text-white/70 mb-2">Sua Query:</h3>
+                    <div className="bg-black/20 p-4 rounded-xl border border-white/10 min-h-[100px] mb-6 font-mono">
+                        {builtQuery || <span className="text-white/50">...</span>}
+                    </div>
 
-                        <div className="sql-terminal-content">
-                            {feedbackMessage && (
-                                <div className={`feedback-message ${feedbackType}`}>
-                                    <span>{feedbackType === 'success' && '✅'}{feedbackType === 'error' && '❌'}{feedbackType === 'warning' && '⚠️'}</span>
-                                    <span>{feedbackMessage}</span>
-                                </div>
-                            )}
-
-                            <div className="query-builder">
-                                <div className="builder-title"><span>🔧</span> Construtor de Consulta (Opcional)</div>
-                                <div className="builder-buttons">
-                                    {currentLesson.queryParts && currentLesson.queryParts.slice(0, 8).map((part, index) => (
-                                        <button key={index} onClick={() => addToQuery(part)} disabled={showResult} className="sql-part-btn">{part}</button>
-                                    ))}
-                                    <button onClick={clearQuery} disabled={showResult} className="sql-part-btn clear-btn">LIMPAR</button>
-                                </div>
-                            </div>
-
-                            <div className="sql-input-section">
-                                <label className="input-label">Digite seu comando SQL:</label>
-                                <div className="sql-input-container">
-                                    <span className="sql-prompt">sql&gt;</span>
-                                    <input type="text" className="sql-input-field" value={userQuery} onChange={(e) => setUserQuery(e.target.value)} onKeyPress={handleKeyPress} placeholder="Digite aqui seu comando SQL..." disabled={showResult} autoFocus />
-                                    <button onClick={handleCheck} disabled={showResult || !userQuery.trim()} className="sql-execute-btn">EXECUTAR</button>
-                                </div>
-                            </div>
-
-                            <div className="sql-results-section">
-                                <div className="results-header">
-                                    <span>📊 RESULTADOS</span>
-                                    <span className="results-count">{showResult ? (isCorrect ? 'Consulta executada com sucesso!' : 'Erro na consulta') : 'Aguardando execução...'}</span>
-                                </div>
-                                <div className="results-content">
-                                    {!showResult ? (
-                                        <div className="no-results">Digite um comando SQL e pressione EXECUTAR para ver os resultados.</div>
-                                    ) : (
-                                        <div className="text-center py-8">
-                                            {isCorrect ? (
-                                                <div className="text-green-400"><div className="text-4xl mb-3">✓</div><div className="text-lg font-bold">Consulta executada com sucesso!</div><div className="text-sm text-white/70 mt-2">Sua query retornaria os dados esperados.</div></div>
-                                            ) : (
-                                                <div className="text-red-400"><div className="text-4xl mb-3">✗</div><div className="text-lg font-bold">Erro na consulta</div><div className="text-sm text-white/70 mt-2">Revise sua sintaxe e tente novamente.</div></div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                 {/* Parts bank */}
+                    <div className="flex flex-wrap gap-3 justify-center">
+                        {currentLesson.queryParts.map((part, index) => (
+                            <button key={index} onClick={() => handlePartClick(part)} disabled={showResult} className="bg-white/10 hover:bg-white/20 text-white font-mono px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                                {part}
+                            </button>
+                        ))}
+                       <button onClick={handleUndo} disabled={showResult || userQueryParts.length === 0} className="bg-red-500/20 hover:bg-red-500/40 text-red-300 px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                            Desfazer
+                        </button>
                     </div>
                 </main>
                 
+                {/* Footer for Check/Continue */}
                 <footer className="bg-white/10 border-t border-white/20 p-6 sticky bottom-0">
                     <div className="max-w-4xl mx-auto">
                         {!showResult ? (
-                            <button onClick={handleCheck} disabled={!userQuery.trim()} className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed">Verificar Resposta</button>
-                        ) : (
+                            <button
+                           onClick={handleCheck}
+                                disabled={userQueryParts.length === 0}
+                                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
+                           >
+                                Verificar
+                            </button>
+                       ) : (
                             <div className="animate-fade-in">
-                                <button onClick={handleContinue} className={`w-full text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform ${isCorrect ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-orange-500 to-red-500'}`}>{isCorrect ? '🎉 Continuar' : '🔄 Tentar Próxima Lição'}</button>
-                            </div>
+                                <div className="flex items-center gap-3 mb-3">
+                                    {isCorrect ? <><Check /><span className="text-green-400 font-bold text-lg">Correto!</span></> : <><X /><span className="text-red-400 font-bold text-lg">Incorreto</span></>}
+                                </div>
+                                <p className="text-white/90 mb-4 font-mono">
+                                    {isCorrect ? `Perfeito! A query "${currentLesson.correctQuery}" está correta.` : `Opa, não foi bem isso. A query correta era: ${currentLesson.correctQuery}`}
+                           </p>
+                                <button
+                                 onClick={handleContinue}
+                                    className={`w-full text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform ${isCorrect ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-orange-500 to-red-500'}`}
+                                >
+                                    Continuar
+                                </button>
+                        </div>
                         )}
                     </div>
-                </footer>
+               </footer>
             </div>
         );
     });
