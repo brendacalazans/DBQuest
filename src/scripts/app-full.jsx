@@ -1382,13 +1382,17 @@
             );
         });
         
-        const CompletionView = memo(({ answeredQuestions, currentLesson, onNavigate, lastGainedXP }) => {
+        const CompletionView = memo(({ answeredQuestions, currentLesson, onNavigate }) => {
             const correctAnswers = answeredQuestions.filter(a => a.isCorrect).length;
-            const totalQuestions = currentLesson.questions.length;
-            const isSuccess = correctAnswers === totalQuestions;
+            
+            // --- LÓGICA MODIFICADA ---
+            // Verifica se a lição era um quiz (tem 'questions') ou uma prática (não tem)
+            const isQuiz = currentLesson.questions && currentLesson.questions.length > 0;
+            const totalQuestions = isQuiz ? currentLesson.questions.length : 1; // Prática conta como 1
+            const isSuccess = correctAnswers > 0; // Se 'answeredQuestions' tiver UM acerto, é sucesso
+            // --- FIM DA MODIFICAÇÃO ---
             
-            // Usa o prop 'lastGainedXP' em vez de recalcular
-            const xpGained = lastGainedXP; 
+            const xpGained = isSuccess ? currentLesson.xp : 0;
             
             return (
                 <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col items-center justify-center p-6 text-center animate-fade-in">
@@ -1396,39 +1400,38 @@
                         <div className="text-8xl mb-6">{isSuccess ? '🎉' : '🤔'}</div>
                         <h2 className="text-3xl font-bold mb-4">{isSuccess ? 'Lição Concluída!' : 'Quase lá!'}</h2>
                         <p className="text-white/80 text-lg mb-6">
-                            {/* Mensagem atualizada */}
-                            {isSuccess ? 
-                                (xpGained > 0 ? `Você ganhou +${xpGained} XP e manteve sua ofensiva!` : `Lição revisada com sucesso!`) 
-                                : 'Você não acertou todas as perguntas. Revise o material e tente novamente!'}
+                            {isSuccess ? `Você ganhou +${xpGained} XP e manteve sua ofensiva!` : 'Você errou a questão. Revise o material e tente novamente!'}
                         </p>
                         
                         <div className="bg-white/5 rounded-xl p-6 mb-8 text-left divide-y divide-white/10">
                             <div className="py-4 flex justify-between items-center"><span className="text-white/70">Precisão</span><span className={`font-bold text-2xl ${isSuccess ? 'text-green-400' : 'text-red-400'}`}>{((correctAnswers / totalQuestions) * 100).toFixed(0)}%</span></div>
-                            <div className="py-4 flex justify-between items-center"><span className="text-white/70">Perguntas Corretas</span><span className="font-bold text-2xl">{correctAnswers} de {totalQuestions}</span></div>
+                            {isQuiz && ( // Só mostra isso se for um quiz
+                                <div className="py-4 flex justify-between items-center"><span className="text-white/70">Perguntas Corretas</span><span className="font-bold text-2xl">{correctAnswers} de {totalQuestions}</span></div>
+                            )}
                             <div className="py-4 flex justify-between items-center"><span className="text-white/70">XP Ganhos</span><span className="font-bold text-2xl">{xpGained}</span></div>
                         </div>
                         
                         <div className="flex gap-4">
                             {!isSuccess && (
                                 <button
-                                    onClick={() => onNavigate('lesson')}
+                                    // Modificado para voltar para a view correta (practice ou lesson)
+                                    onClick={() => onNavigate(isQuiz ? 'lesson' : 'practice')}
                                     className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-lg transition-colors"
                                 >
-                                   Tentar Novamente
+                                    Tentar Novamente
                                 </button>
                             )}
                             <button
-                              onClick={() => onNavigate('home')}
+                                onClick={() => onNavigate('home')}
                                 className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-colors"
                             >
                                 Continuar
                             </button>
-                       </div>
-                    </div>
+                        </div>
+                     </div>
                 </div>
             );
         });
-
         const NoLivesView = memo(({ userProgress, onRefillWithGems, onCooldownEnd, onNavigate }) => {
             const [timeLeft, setTimeLeft] = useState('');
 
@@ -1885,6 +1888,113 @@
             setShowResult(false);
             onGenerateChallenge();
         };
+
+        const PracticeView = memo(({ currentLesson, userProgress, onNavigate, onPracticeComplete }) => {
+        const [userQueryParts, setUserQueryParts] = useState([]);
+        const [showResult, setShowResult] = useState(false);
+
+        // Progresso simples (ou está 0% ou 100%)
+        const progress = showResult ? 100 : 0; 
+        
+        // Normaliza a query para comparação (remove espaços extras, ponto e vírgula final, e ignora maiúsculas/minúsculas)
+        const normalizeQuery = (query) => {
+            if (!query) return "";
+            return query.replace(/;$/, '').replace(/\s+/g, ' ').trim().toLowerCase();
+        };
+        
+        const builtQuery = userQueryParts.join(' ');
+        const isCorrect = normalizeQuery(builtQuery) === normalizeQuery(currentLesson.correctQuery);
+
+        const handleCheck = () => {
+            // Apenas exibe o resultado. A lógica de vidas/conclusão
+            // acontece no 'handleContinue' (chamando onPracticeComplete)
+            setShowResult(true);
+        };
+        
+        const handleContinue = () => {
+            // Informa o App (componente pai) se o usuário acertou ou errou
+            onPracticeComplete(isCorrect);
+        };
+        
+        const handlePartClick = (part) => {
+            setUserQueryParts(prev => [...prev, part]);
+        };
+        
+        const handleUndo = () => {
+            setUserQueryParts(prev => prev.slice(0, -1));
+        };
+
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col">
+                <header className="bg-white/10 border-b border-white/20">
+                    <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
+                        <button onClick={() => onNavigate('trailDetail')} className="text-white/80 hover:text-white"><X/></button>
+                        <div className="w-full bg-white/20 h-4 rounded-full"><div className="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-300" style={{width: `${progress}%`}} /></div>
+                        <div className="flex items-center gap-2 text-red-400"> <Heart /> <span className="font-bold">{userProgress.lives}</span> </div>
+                    </div>
+                </header>
+                
+                <main className="max-w-4xl mx-auto px-6 py-8 flex-1 w-full">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">{currentLesson.title}</h2>
+                    <p className="text-lg text-white/80 mb-6">{currentLesson.description}</p>
+                    
+                    <div className="bg-black/20 p-4 rounded-xl border border-white/10 mb-6">
+                        <h3 className="text-sm text-white/70 mb-2">Schema da Tabela:</h3>
+                        <pre className="bg-black/30 p-4 rounded-lg text-sm text-cyan-300 font-mono whitespace-pre-wrap"><code>{currentLesson.schema}</code></pre>
+                    </div>
+
+                    {/* Query constructor */}
+                    <h3 className="text-sm text-white/70 mb-2">Sua Query:</h3>
+                    <div className="bg-black/20 p-4 rounded-xl border border-white/10 min-h-[100px] mb-6 font-mono">
+                        {builtQuery || <span className="text-white/50">...</span>}
+                    </div>
+
+                    {/* Parts bank */}
+                    <div className="flex flex-wrap gap-3 justify-center">
+                        {currentLesson.queryParts.map((part, index) => (
+                            <button key={index} onClick={() => handlePartClick(part)} disabled={showResult} className="bg-white/10 hover:bg-white/20 text-white font-mono px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                                {part}
+                            </button>
+                        ))}
+                        <button onClick={handleUndo} disabled={showResult || userQueryParts.length === 0} className="bg-red-500/20 hover:bg-red-500/40 text-red-300 px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                            Desfazer
+                        </button>
+                    </div>
+                </main>
+                
+                {/* Footer for Check/Continue */}
+                <footer className="bg-white/10 border-t border-white/20 p-6 sticky bottom-0">
+                    <div className="max-w-4xl mx-auto">
+                        {!showResult ? (
+                            <button
+                                onClick={handleCheck}
+                                disabled={userQueryParts.length === 0}
+                                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
+                            >
+                                Verificar
+                            </button>
+                        ) : (
+                            <div className="animate-fade-in">
+                                <div className="flex items-center gap-3 mb-3">
+                                    {isCorrect ? <><Check /><span className="text-green-400 font-bold text-lg">Correto!</span></> : <><X /><span className="text-red-400 font-bold text-lg">Incorreto</span></>}
+                                </div>
+                                <p className="text-white/90 mb-4 font-mono">
+                                    {isCorrect ? `Perfeito! A query "${currentLesson.correctQuery}" está correta.` : `Opa, não foi bem isso. A query correta era: ${currentLesson.correctQuery}`}
+                                </p>
+                                <button
+                                    onClick={handleContinue}
+                                    className={`w-full text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform ${isCorrect ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-orange-500 to-red-500'}`}
+
+                                >
+                                    Continuar
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </footer>
+            </div>
+        );
+    });
 
         const getOptionClasses = (index) => {
             if (showResult) {
