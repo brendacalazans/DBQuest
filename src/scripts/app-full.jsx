@@ -2477,112 +2477,163 @@
         );
     });
 
-    // --- NOVO COMPONENTE PARA EXERCÍCIOS PRÁTICOS ---
-    const PracticeView = memo(({ currentLesson, userProgress, onNavigate, onPracticeComplete }) => {
-        const [userQueryParts, setUserQueryParts] = useState([]);
-        const [showResult, setShowResult] = useState(false);
+    const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
-        // Progresso simples (ou está 0% ou 100%)
-        const progress = showResult ? 100 : 0; 
-        
-        // Normaliza a query para comparação (remove espaços extras, ponto e vírgula final, e ignora maiúsculas/minúsculas)
+    // --- NOVA VERSÃO COMPLETA DO PRACTICEVIEW (TEXTO LIVRE) ---
+    const PracticeView = memo(({ currentLesson, userProgress, onNavigate, onPracticeComplete }) => {
+        const [showResult, setShowResult] = useState(false);
+        const [userQueryText, setUserQueryText] = useState(""); // 🔥 novo: texto da query escrita pelo usuário
+    
+        // Normaliza a query para comparação
         const normalizeQuery = (query) => {
             if (!query) return "";
-            return query.replace(/;$/, '').replace(/\s+/g, ' ').trim().toLowerCase();
+            return query
+                .replace(/;$/, '')            // remove ; final
+                .replace(/\s+/g, ' ')         // normaliza múltiplos espaços
+                .trim()
+                .toLowerCase();               // ignora maiúsculas/minúsculas
         };
-        
-        const builtQuery = userQueryParts.join(' ');
-        const isCorrect = normalizeQuery(builtQuery) === normalizeQuery(currentLesson.correctQuery);
-
-        const handleCheck = () => {
-            // Apenas exibe o resultado. A lógica de vidas/conclusão
-            // acontece no 'handleContinue' (chamando onPracticeComplete)
-            setShowResult(true);
-        };
-        
-        const handleContinue = () => {
-            // Informa o App (componente pai) se o usuário acertou ou errou
-            onPracticeComplete(isCorrect);
-        };
-        
-        const handlePartClick = (part) => {
-            setUserQueryParts(prev => [...prev, part]);
-        };
-        
-        const handleUndo = () => {
-            setUserQueryParts(prev => prev.slice(0, -1));
-        };
-
+    
+        // Determina se o usuário acertou
+        const isCorrect =
+            normalizeQuery(userQueryText) === normalizeQuery(currentLesson.correctQuery);
+    
+        // Ao trocar de lição, limpamos tudo
+        useEffect(() => {
+            setShowResult(false);
+            setUserQueryText("");
+        }, [currentLesson]);
+    
+        const progress = showResult ? 100 : 0;
+    
+        const handleCheck = () => setShowResult(true);
+        const handleContinue = () => onPracticeComplete(isCorrect);
+    
         return (
             <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col">
+    
+                {/* HEADER */}
                 <header className="bg-white/10 border-b border-white/20">
                     <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => onNavigate('trailDetail')} className="text-white/80 hover:text-white"><X/></button>
-                        <div className="w-full bg-white/20 h-4 rounded-full"><div className="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-300" style={{width: `${progress}%`}} /></div>
-                        <div className="flex items-center gap-2 text-red-400"> <Heart /> <span className="font-bold">{userProgress.lives}</span> </div>
+                        <button
+                            onClick={() => onNavigate("trailDetail")}
+                            className="text-white/80 hover:text-white"
+                        >
+                            <X />
+                        </button>
+    
+                        {/* PROGRESS BAR */}
+                        <div className="w-full bg-white/20 h-4 rounded-full">
+                            <div
+                                className="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-300"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
+    
+                        {/* LIVES */}
+                        <div className="flex items-center gap-2 text-red-400">
+                            <Heart />
+                            <span className="font-bold">{userProgress.lives}</span>
+                        </div>
                     </div>
                 </header>
-               
+    
+                {/* MAIN */}
                 <main className="max-w-4xl mx-auto px-6 py-8 flex-1 w-full">
                     <h2 className="text-2xl md:text-3xl font-bold mb-4">{currentLesson.title}</h2>
                     <p className="text-lg text-white/80 mb-6">{currentLesson.description}</p>
-                    
+    
+                    {/* SCHEMA */}
                     <div className="bg-black/20 p-4 rounded-xl border border-white/10 mb-6">
                         <h3 className="text-sm text-white/70 mb-2">Schema da Tabela:</h3>
-                        <pre className="bg-black/30 p-4 rounded-lg text-sm text-cyan-300 font-mono whitespace-pre-wrap"><code>{currentLesson.schema}</code></pre>
+                        <pre className="bg-black/30 p-4 rounded-lg text-sm text-cyan-300 font-mono whitespace-pre-wrap">
+                            <code>{currentLesson.schema}</code>
+                        </pre>
                     </div>
-
-                    {/* Query constructor */}
-                    <h3 className="text-sm text-white/70 mb-2">Sua Query:</h3>
-                    <div className="bg-black/20 p-4 rounded-xl border border-white/10 min-h-[100px] mb-6 font-mono">
-                        {builtQuery || <span className="text-white/50">...</span>}
+    
+                    {/* INPUT DE TEXTO */}
+                    <h3 className="text-sm text-white/70 mb-2">Digite sua Query Completa:</h3>
+                    <div className="bg-black/20 p-4 rounded-xl border border-white/10 mb-6">
+                        <textarea
+                            value={userQueryText}
+                            onChange={(e) => setUserQueryText(e.target.value)}
+                            placeholder="Ex: SELECT * FROM clientes;"
+                            className="w-full min-h-[160px] bg-transparent text-white font-mono text-sm p-3 rounded resize-none focus:outline-none"
+                        />
                     </div>
-
-                 {/* Parts bank */}
-                    <div className="flex flex-wrap gap-3 justify-center">
-                        {currentLesson.queryParts.map((part, index) => (
-                            <button key={index} onClick={() => handlePartClick(part)} disabled={showResult} className="bg-white/10 hover:bg-white/20 text-white font-mono px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
-                                {part}
-                            </button>
-                        ))}
-                       <button onClick={handleUndo} disabled={showResult || userQueryParts.length === 0} className="bg-red-500/20 hover:bg-red-500/40 text-red-300 px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
-                            Desfazer
-                        </button>
-                    </div>
+    
+                    {/* BOTÃO LIMPAR */}
+                    <button
+                        onClick={() => setUserQueryText("")}
+                        disabled={showResult || userQueryText.length === 0}
+                        className="bg-red-500/20 hover:bg-red-500/40 text-red-300 px-4 py-2 rounded-lg transition-colors disabled:opacity-50 mb-6"
+                    >
+                        Limpar
+                    </button>
                 </main>
-                
-                {/* Footer for Check/Continue */}
+    
+                {/* FOOTER */}
                 <footer className="bg-white/10 border-t border-white/20 p-6 sticky bottom-0">
                     <div className="max-w-4xl mx-auto">
+    
+                        {/* VERIFICAR */}
                         {!showResult ? (
                             <button
-                           onClick={handleCheck}
-                                disabled={userQueryParts.length === 0}
+                                onClick={handleCheck}
+                                disabled={userQueryText.trim() === ""}
                                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
-                           >
+                            >
                                 Verificar
                             </button>
-                       ) : (
+                        ) : (
                             <div className="animate-fade-in">
+    
+                                {/* RESULTADO */}
                                 <div className="flex items-center gap-3 mb-3">
-                                    {isCorrect ? <><Check /><span className="text-green-400 font-bold text-lg">Correto!</span></> : <><X /><span className="text-red-400 font-bold text-lg">Incorreto</span></>}
+                                    {isCorrect ? (
+                                        <>
+                                            <Check />
+                                            <span className="text-green-400 font-bold text-lg">
+                                                Correto!
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <X />
+                                            <span className="text-red-400 font-bold text-lg">
+                                                Incorreto
+                                            </span>
+                                        </>
+                                    )}
                                 </div>
+    
+                                {/* EXPLICAÇÃO */}
                                 <p className="text-white/90 mb-4 font-mono">
-                                    {isCorrect ? `Perfeito! A query "${currentLesson.correctQuery}" está correta.` : `Opa, não foi bem isso. A query correta era: ${currentLesson.correctQuery}`}
-                           </p>
+                                    {isCorrect
+                                        ? `Perfeito! A query "${currentLesson.correctQuery}" está correta.`
+                                        : `A query correta é: ${currentLesson.correctQuery}`}
+                                </p>
+    
+                                {/* CONTINUAR */}
                                 <button
-                                 onClick={handleContinue}
-                                    className={`w-full text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform ${isCorrect ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-orange-500 to-red-500'}`}
+                                    onClick={handleContinue}
+                                    className={`w-full text-white font-bold py-4 rounded-xl hover:scale-105 transition-transform ${
+                                        isCorrect
+                                            ? "bg-gradient-to-r from-green-500 to-emerald-500"
+                                            : "bg-gradient-to-r from-orange-500 to-red-500"
+                                    }`}
                                 >
                                     Continuar
                                 </button>
-                        </div>
+                            </div>
                         )}
                     </div>
-               </footer>
+                </footer>
             </div>
         );
     });
+
+
 
 
     const container = document.getElementById('root');
