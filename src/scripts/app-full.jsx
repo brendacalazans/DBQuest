@@ -1256,21 +1256,25 @@
                         }
 
                         // Check for streak reset
-                        const lastCompleted = data.lastCompletedLessonDate ? new Date(data.lastCompletedLessonDate) : null;
-                        if (lastCompleted) {
-                            const yesterday = new Date(today);
-                            yesterday.setDate(yesterday.getDate() - 1);
-                            
-                            // Se a última lição completada foi ANTES de ontem, zera a ofensiva
-                            if (lastCompleted.getTime() < yesterday.getTime()) {
-                                updates['gamification/streak'] = 0;
-                                needsUpdate = true;
-                            }
-                        }
+                       const lastCompleted = data.gamification?.lastCompletedLessonDate 
+    ? new Date(data.gamification.lastCompletedLessonDate) 
+    : null;
 
-                        if (needsUpdate) {
-                            await update(userRef, updates);
-                        }
+if (lastCompleted) {
+    lastCompleted.setHours(0, 0, 0, 0);  // ✅ CORREÇÃO: Zera as horas para comparar apenas o dia
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);  // ✅ CORREÇÃO: Zera as horas do yesterday também
+    
+    // Se a última lição completada foi ANTES de ontem, zera a ofensiva
+    if (lastCompleted.getTime() < yesterday.getTime()) {
+        updates['gamification/streak'] = 0;
+        needsUpdate = true;
+        console.log("Streak resetado - usuário não completou lição ontem");
+    }
+}
+
                         
                         // Atualiza o estado local com os dados do DB (e possíveis atualizações)
                         setUserProgress({
