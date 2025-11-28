@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta tags para SEO -->
+    <meta name="description" content="Complete lições interativas e aprenda banco de dados de forma prática com o DBQuest.">
+    <meta name="keywords" content="lição, exercício, quiz, banco de dados, aprendizado">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Lição - DBQuest">
+    <meta property="og:description" content="Complete lições interativas de banco de dados">
+    <meta property="og:type" content="website">
+    
     <title>Lição - DBQuest</title>
     
     <!-- Tailwind CSS -->
@@ -19,10 +29,16 @@
     <link rel="stylesheet" href="../styles/global.css">
     <link rel="stylesheet" href="../styles/components/toast.css">
     <link rel="stylesheet" href="../styles/pages/lesson.css">
-    <link rel="stylesheet" href="../styles/components/lesson-terminal.css">
+    <link rel="stylesheet" href="../components/lesson-terminal.css">
 </head>
 <body class="bg-gray-900">
-    <div id="root"></div>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-to-content">Pular para o conteúdo principal</a>
+    
+    <!-- Container principal com role -->
+    <main id="main-content" role="main" aria-label="Lição">
+        <div id="root"></div>
+    </main>
 
     <!-- Firebase Config -->
     <script type="module">
@@ -70,5 +86,35 @@
     
     <!-- App React Completo -->
     <script type="text/babel" src="../scripts/app-full.jsx"></script>
+    
+    <style>
+        /* Estilos adicionais para acessibilidade */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #6366f1;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            z-index: 100;
+            font-weight: 600;
+        }
+        
+        .skip-to-content:focus {
+            top: 0;
+        }
+        
+        /* Melhorias de contraste para resultados */
+        .lesson-result-footer {
+            color: white;
+        }
+        
+        /* Garantir que o texto seja legível */
+        .lesson-result-explanation {
+            color: rgba(255, 255, 255, 0.95);
+        }
+    </style>
 </body>
 </html>

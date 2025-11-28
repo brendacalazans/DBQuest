@@ -2,7 +2,24 @@
  * Estilos Globais - DBQuest
  * 
  * Contém animações e estilos personalizados aplicados globalmente
+ * Versão com melhorias de acessibilidade e responsividade
  */
+
+/* Reset e configurações base */
+* {
+    box-sizing: border-box;
+}
+
+/* Suporte para prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 
 /* Animação de fade-in */
 @keyframes fadeIn {
@@ -39,3 +56,88 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
+/* Melhorias de acessibilidade - Foco visível */
+*:focus-visible {
+    outline: 3px solid #a78bfa;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Remove outline padrão mas mantém para teclado */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Skip to content link para acessibilidade */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #6366f1;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+    z-index: 100;
+    font-weight: 600;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* Classe utilitária para ocultar visualmente mas manter acessível */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Melhorias de contraste para texto com opacidade */
+.text-high-contrast {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.text-medium-contrast {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Responsividade - Utility classes */
+@media (max-width: 640px) {
+    .mobile-hidden {
+        display: none !important;
+    }
+}
+
+@media (min-width: 641px) {
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+/* Melhorias para touch targets em mobile */
+@media (max-width: 768px) {
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        min-height: 44px; /* Tamanho mínimo recomendado pela WCAG */
+        min-width: 44px;
+    }
+}
+
+/* Transições suaves respeitando prefers-reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+    * {
+        transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+    }
+}

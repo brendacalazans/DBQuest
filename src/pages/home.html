@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta tags para SEO -->
+    <meta name="description" content="Escolha sua trilha de aprendizado e comece a dominar banco de dados com o DBQuest.">
+    <meta name="keywords" content="trilhas, SQL, NoSQL, modelagem de dados, aprendizado">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Home - DBQuest">
+    <meta property="og:description" content="Escolha sua trilha de aprendizado em banco de dados">
+    <meta property="og:type" content="website">
+    
     <title>Home - DBQuest</title>
     
     <!-- Tailwind CSS -->
@@ -22,6 +32,10 @@
     <link rel="stylesheet" href="../styles/pages/home.css">
 </head>
 <body class="bg-gray-900">
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-to-content">Pular para o conteúdo principal</a>
+    
+    <!-- Container principal -->
     <div id="root"></div>
 
     <!-- Configuração Firebase -->
@@ -75,5 +89,25 @@
     
     <!-- App React Completo -->
     <script type="text/babel" src="../scripts/app-full.jsx"></script>
+    
+    <style>
+        /* Estilos adicionais para acessibilidade */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #6366f1;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            z-index: 100;
+            font-weight: 600;
+        }
+        
+        .skip-to-content:focus {
+            top: 0;
+        }
+    </style>
 </body>
 </html>

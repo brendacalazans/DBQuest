@@ -1,147 +1,322 @@
 /**
  * Estilos da Página de Ranking
- * 
- * Mantém todos os estilos Tailwind do componente RankingView
+ * Versão com melhorias de responsividade e acessibilidade
  */
 
 /* Container principal */
 .ranking-container {
-    max-width: 48rem; /* max-w-3xl */
+    max-width: 48rem;
     margin: 0 auto;
-    padding: 1.5rem 1.5rem 2rem; /* px-6 py-8 */
+    padding: 1rem 1rem 2rem;
+}
+
+@media (min-width: 640px) {
+    .ranking-container {
+        padding: 1.25rem 1.25rem 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .ranking-container {
+        padding: 1.5rem 1.5rem 2rem;
+    }
 }
 
 .ranking-title {
-    font-size: 1.875rem; /* text-3xl */
+    font-size: 1.5rem;
     font-weight: bold;
     color: white;
-    margin-bottom: 2rem; /* mb-8 */
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+    .ranking-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .ranking-title {
+        font-size: 1.875rem;
+        margin-bottom: 2rem;
+    }
 }
 
 /* Loading */
 .ranking-loading {
     text-align: center;
-    color: rgba(255, 255, 255, 0.7); /* text-white/70 */
+    color: rgba(255, 255, 255, 0.85);
+    padding: 2rem 1rem;
 }
 
 /* Lista de ranking */
 .ranking-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem; /* space-y-3 */
+    gap: 0.625rem;
+}
+
+@media (min-width: 768px) {
+    .ranking-list {
+        gap: 0.75rem;
+    }
 }
 
 /* Card de usuário no ranking */
 .ranking-card {
-    background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
-    border-radius: 1rem; /* rounded-2xl */
-    padding: 1rem; /* p-4 */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s;
 }
 
+@media (min-width: 768px) {
+    .ranking-card {
+        padding: 1rem;
+    }
+}
+
 .ranking-card:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* hover:bg-white/10 */
-    transform: translateX(0.25rem); /* hover:translate-x-1 */
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(0.25rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ranking-card:hover {
+        transform: none;
+    }
+}
+
+.ranking-card:focus-visible {
+    outline: 3px solid #a78bfa;
+    outline-offset: 2px;
 }
 
 /* Destaque para o usuário atual */
 .ranking-card.current-user {
-    background: linear-gradient(to right, #8b5cf6, #6366f1); /* from-purple-500 to-indigo-500 */
-    border-color: #a78bfa; /* border-purple-400 */
+    background: linear-gradient(to right, #8b5cf6, #6366f1);
+    border-color: #a78bfa;
 }
 
 /* Posições especiais (1º, 2º, 3º) */
 .ranking-card.rank-1 {
-    border-color: #facc15; /* border-yellow-400 */
-    background-color: rgba(250, 204, 21, 0.1); /* bg-yellow-400/10 */
+    border-color: #facc15;
+    background-color: rgba(250, 204, 21, 0.1);
 }
 
 .ranking-card.rank-2 {
-    border-color: #9ca3af; /* border-gray-400 */
-    background-color: rgba(156, 163, 175, 0.1); /* bg-gray-400/10 */
+    border-color: #9ca3af;
+    background-color: rgba(156, 163, 175, 0.1);
 }
 
 .ranking-card.rank-3 {
-    border-color: #b45309; /* border-yellow-700 */
-    background-color: rgba(180, 83, 9, 0.1); /* bg-yellow-700/10 */
+    border-color: #b45309;
+    background-color: rgba(180, 83, 9, 0.1);
 }
 
 /* Conteúdo do card */
 .ranking-card-content {
     display: flex;
     align-items: center;
-    gap: 1rem; /* gap-4 */
+    gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .ranking-card-content {
+        gap: 1rem;
+    }
 }
 
 /* Ícone de posição */
 .ranking-position {
-    width: 3rem; /* w-12 */
+    width: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .ranking-position {
+        width: 3rem;
+    }
 }
 
 .ranking-position-number {
-    color: rgba(255, 255, 255, 0.5); /* text-white/50 */
+    color: rgba(255, 255, 255, 0.7);
     font-weight: 600;
+    font-size: 0.9375rem;
+}
+
+@media (min-width: 768px) {
+    .ranking-position-number {
+        font-size: 1rem;
+    }
+}
+
+/* Medalhas para top 3 */
+.ranking-position-medal {
+    font-size: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .ranking-position-medal {
+        font-size: 1.75rem;
+    }
 }
 
 /* Avatar */
 .ranking-avatar {
-    width: 3rem; /* w-12 */
-    height: 3rem; /* h-12 */
-    border-radius: 9999px; /* rounded-full */
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 1.125rem; /* text-lg */
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .ranking-avatar {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.125rem;
+    }
 }
 
 .ranking-avatar.emoji {
-    font-size: 1.5rem; /* text-2xl */
+    font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .ranking-avatar.emoji {
+        font-size: 1.5rem;
+    }
 }
 
 .ranking-avatar.initials {
-    background: linear-gradient(to bottom right, #8b5cf6, #6366f1); /* from-purple-500 to-indigo-500 */
+    background: linear-gradient(to bottom right, #8b5cf6, #6366f1);
     color: white;
 }
 
 /* Informações do usuário */
 .ranking-user-info {
     flex: 1;
+    min-width: 0;
 }
 
 .ranking-username {
     font-weight: 600;
     color: white;
+    font-size: 0.9375rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+    .ranking-username {
+        font-size: 1rem;
+    }
 }
 
 .ranking-stats {
     display: flex;
     align-items: center;
-    gap: 1rem; /* gap-4 */
-    margin-top: 0.25rem; /* mt-1 */
-    font-size: 0.75rem; /* text-xs */
-    color: rgba(255, 255, 255, 0.6); /* text-white/60 */
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.75);
+    flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+    .ranking-stats {
+        gap: 1rem;
+    }
 }
 
 .ranking-stat {
     display: flex;
     align-items: center;
-    gap: 0.25rem; /* gap-1 */
+    gap: 0.25rem;
 }
 
 .ranking-stat-icon {
-    width: 0.875rem; /* w-3.5 */
-    height: 0.875rem; /* h-3.5 */
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
 }
 
 /* XP total */
 .ranking-xp {
     font-weight: bold;
-    font-size: 1.125rem; /* text-lg */
+    font-size: 1rem;
     color: white;
+    flex-shrink: 0;
 }
 
+@media (min-width: 768px) {
+    .ranking-xp {
+        font-size: 1.125rem;
+    }
+}
+
+/* Estado vazio */
+.ranking-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.ranking-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.ranking-empty-text {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+@media (min-width: 768px) {
+    .ranking-empty-text {
+        font-size: 1.125rem;
+    }
+}
+
+/* Melhorias de acessibilidade */
+.ranking-card[aria-current="true"] {
+    /* Indicação adicional para o card do usuário atual */
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.5);
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 360px) {
+    .ranking-card-content {
+        gap: 0.5rem;
+    }
+    
+    .ranking-position {
+        width: 2rem;
+    }
+    
+    .ranking-avatar {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
+    }
+    
+    .ranking-username {
+        font-size: 0.875rem;
+    }
+    
+    .ranking-stats {
+        font-size: 0.6875rem;
+        gap: 0.5rem;
+    }
+}

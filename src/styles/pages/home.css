@@ -1,188 +1,346 @@
 /**
  * Estilos da Página Home
- * 
- * Mantém todos os estilos Tailwind do componente HomeView
+ * Versão com melhorias de responsividade e acessibilidade
  */
 
 /* Container principal */
 .home-container {
-    max-width: 80rem; /* max-w-7xl */
+    max-width: 80rem;
     margin: 0 auto;
-    padding: 1.5rem; /* px-6 py-8 */
+    padding: 1rem;
+}
+
+@media (min-width: 640px) {
+    .home-container {
+        padding: 1.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .home-container {
+        padding: 1.5rem;
+    }
 }
 
 /* Seção de boas-vindas */
 .home-welcome {
-    background: linear-gradient(to right, #6366f1, #8b5cf6); /* from-indigo-500 to-purple-500 */
-    border-radius: 1.5rem; /* rounded-3xl */
-    padding: 2rem; /* p-8 */
-    margin-bottom: 2rem; /* mb-8 */
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); /* shadow-xl */
+    background: linear-gradient(to right, #6366f1, #8b5cf6);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 640px) {
+    .home-welcome {
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .home-welcome {
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
 }
 
 .home-welcome-title {
-    font-size: 2.25rem; /* text-4xl */
+    font-size: 1.5rem;
     font-weight: bold;
     color: white;
-    margin-bottom: 0.5rem; /* mb-2 */
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+    .home-welcome-title {
+        font-size: 1.875rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .home-welcome-title {
+        font-size: 2.25rem;
+    }
 }
 
 .home-welcome-subtitle {
-    color: rgba(255, 255, 255, 0.9); /* text-white/90 */
-    font-size: 1.125rem; /* text-lg */
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+    .home-welcome-subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .home-welcome-subtitle {
+        font-size: 1.125rem;
+    }
 }
 
 /* Filtros */
 .home-filters {
     display: flex;
-    gap: 0.75rem; /* gap-3 */
-    margin-bottom: 2rem; /* mb-8 */
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .home-filters {
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+    }
 }
 
 .home-filter-btn {
-    padding: 0.5rem 1rem; /* px-4 py-2 */
-    border-radius: 9999px; /* rounded-full */
+    padding: 0.5rem 0.875rem;
+    border-radius: 9999px;
     font-weight: 600;
     transition: all 0.3s;
     cursor: pointer;
     border: none;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .home-filter-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9375rem;
+    }
+}
+
+.home-filter-btn:focus-visible {
+    outline: 3px solid #a78bfa;
+    outline-offset: 2px;
 }
 
 .home-filter-btn.active {
-    background: linear-gradient(to right, #06b6d4, #3b82f6); /* from-cyan-500 to-blue-500 */
+    background: linear-gradient(to right, #06b6d4, #3b82f6);
     color: white;
 }
 
 .home-filter-btn:not(.active) {
-    background-color: rgba(255, 255, 255, 0.1); /* bg-white/10 */
-    color: rgba(255, 255, 255, 0.7); /* text-white/70 */
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .home-filter-btn:not(.active):hover {
-    background-color: rgba(255, 255, 255, 0.2); /* hover:bg-white/20 */
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Grid de trilhas */
 .home-trails-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem; /* gap-6 */
+    gap: 1rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
     .home-trails-grid {
-        grid-template-columns: repeat(2, 1fr); /* md:grid-cols-2 */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
     }
 }
 
 @media (min-width: 1024px) {
     .home-trails-grid {
-        grid-template-columns: repeat(3, 1fr); /* lg:grid-cols-3 */
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
     }
 }
 
 /* Card de trilha */
 .home-trail-card {
-    background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
-    backdrop-filter: blur(12px); /* backdrop-blur-md */
-    border-radius: 1.5rem; /* rounded-3xl */
-    padding: 1.5rem; /* p-6 */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s;
     cursor: pointer;
 }
 
+@media (min-width: 768px) {
+    .home-trail-card {
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+    }
+}
+
 .home-trail-card:hover {
-    transform: translateY(-0.5rem); /* hover:-translate-y-2 */
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* hover:shadow-2xl */
+    transform: translateY(-0.5rem);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.home-trail-card:focus-visible {
+    outline: 3px solid #a78bfa;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-trail-card:hover {
+        transform: none;
+    }
 }
 
 .home-trail-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* gap-3 */
-    margin-bottom: 1rem; /* mb-4 */
+    gap: 0.625rem;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .home-trail-header {
+        gap: 0.75rem;
+    }
 }
 
 .home-trail-icon {
-    font-size: 3rem; /* text-5xl */
+    font-size: 2.25rem;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .home-trail-icon {
+        font-size: 3rem;
+    }
 }
 
 .home-trail-info {
     flex: 1;
+    min-width: 0;
 }
 
 .home-trail-title {
-    font-size: 1.5rem; /* text-2xl */
+    font-size: 1.25rem;
     font-weight: bold;
     color: white;
+    line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+    .home-trail-title {
+        font-size: 1.5rem;
+    }
 }
 
 .home-trail-description {
-    color: rgba(255, 255, 255, 0.7); /* text-white/70 */
-    font-size: 0.875rem; /* text-sm */
-    margin-top: 0.5rem; /* mt-2 */
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.8125rem;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+    .home-trail-description {
+        font-size: 0.875rem;
+    }
 }
 
 /* Progresso da trilha */
 .home-trail-progress {
-    margin-top: 1rem; /* mt-4 */
+    margin-top: 1rem;
 }
 
 .home-trail-progress-text {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem; /* text-xs */
-    color: rgba(255, 255, 255, 0.6); /* text-white/60 */
-    margin-bottom: 0.5rem; /* mb-2 */
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 0.5rem;
 }
 
 .home-trail-progress-bar {
     width: 100%;
-    height: 0.5rem; /* h-2 */
-    background-color: rgba(255, 255, 255, 0.1); /* bg-white/10 */
-    border-radius: 9999px; /* rounded-full */
+    height: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
     overflow: hidden;
 }
 
 .home-trail-progress-fill {
     height: 100%;
-    border-radius: 9999px; /* rounded-full */
+    border-radius: 9999px;
     transition: width 0.5s;
 }
 
 /* Botão de ação */
 .home-trail-btn {
     width: 100%;
-    margin-top: 1rem; /* mt-4 */
-    padding: 0.75rem; /* py-3 */
-    border-radius: 0.75rem; /* rounded-xl */
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
     font-weight: 600;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem; /* gap-2 */
+    gap: 0.5rem;
     border: none;
     cursor: pointer;
+    font-size: 0.9375rem;
+    min-height: 44px;
+}
+
+.home-trail-btn:focus-visible {
+    outline: 3px solid #a78bfa;
+    outline-offset: 2px;
 }
 
 .home-trail-btn-start {
-    background: linear-gradient(to right, #10b981, #059669); /* from-green-500 to-green-600 */
+    background: linear-gradient(to right, #10b981, #059669);
     color: white;
 }
 
 .home-trail-btn-start:hover {
-    transform: scale(1.05); /* hover:scale-105 */
+    transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-trail-btn-start:hover {
+        transform: none;
+        background: linear-gradient(to right, #059669, #047857);
+    }
 }
 
 .home-trail-btn-continue {
-    background-color: rgba(255, 255, 255, 0.1); /* bg-white/10 */
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
 }
 
 .home-trail-btn-continue:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* hover:bg-white/20 */
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Estado vazio */
+.home-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.home-empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.home-empty-state-text {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.85);
+}
