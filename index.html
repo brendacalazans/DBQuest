@@ -24,31 +24,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        
-        // 1. Importe TODAS as funções de Autenticação que o React usa
-        import { 
-            getAuth, 
-            onAuthStateChanged,
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            GoogleAuthProvider,
-            signInWithPopup,
-            signInWithRedirect,
-            getRedirectResult,
-            updateProfile,
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-        // 2. Importe TODAS as funções de Banco de Dados
-        import { 
-            getDatabase, 
-            ref, 
-            set, 
-            onValue, 
-            update, 
-            increment, 
-            get 
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDoI9Az5udHaeUHOybJc5-YW75oV-kKtgs",
@@ -60,33 +36,18 @@
             appId: "1:130744038521:web:432aaa66a10650210e50a8"
         };
 
-        // Inicializa o App
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        // 3. Inicializa o Banco de Dados (Isso corrigirá o erro 'db is not defined')
-        const db = getDatabase(app);
 
-        // 4. Exporta TUDO para o React usar
+        // Redireciona baseado no estado de autenticação
         window.FB = {
             auth,
-            db, // Agora a variável db existe!
+            db,
             onAuthStateChanged,
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            GoogleAuthProvider,
-            signInWithPopup,
-            signInWithRedirect,
-            getRedirectResult,
-            updateProfile,
-            signOut,
-            ref,
-            onValue,
-            set,
-            update,
-            increment,
-            get
-        };
+            signOut, // <--- Adicione aqui
+            get,     // <--- Adicione aqui
+            // ... outras funções (set, update, ref, etc)
+          };
     </script>
     
     <style>
