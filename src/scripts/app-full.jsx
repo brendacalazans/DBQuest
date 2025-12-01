@@ -26,10 +26,10 @@
     const Code = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>);
     const ChevronRight = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>);
     const ArrowLeft = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>);
-    const BookOpen = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);
-    const PenTool = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-1.5"/><path d="m2 2 7.586 7.586"/><path d="m11 11 1 1"/></svg>);    
-    const GraduationCap = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0l8.59-3.9z"/><path d="M6 12v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5"/></svg>);
     const FileText = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>);
+    const GraduationCap = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0l8.59-3.9z"/><path d="M6 12v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5"/></svg>);
+    const BookOpen = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);
+    const PenTool = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-1.5"/><path d="m2 2 7.586 7.586"/><path d="m11 11 1 1"/></svg>);
     const Play = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>);
     const Clock = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>);
     const User = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);    
@@ -1415,47 +1415,14 @@ if (lastCompleted) {
         };
         
         const getContentTypeInfo = useCallback((type) => {
-    // Definimos o tamanho aqui para ficar igual em todos
-    const iconSize = "w-3 h-3 md:w-4 md:h-4"; 
-
-    switch (type) {
-        case 'article': 
-            return { 
-                label: 'Artigo', 
-                icon: <FileText className={iconSize} />, // Passando a classe
-                color: 'border-blue-400 text-blue-300', 
-                bgGradient: 'from-blue-900/30 to-blue-800/20' 
-            };
-        case 'lesson': 
-            return { 
-                label: 'Aula', 
-                icon: <GraduationCap className={iconSize} />, 
-                color: 'border-cyan-400 text-cyan-300', 
-                bgGradient: 'from-cyan-900/30 to-cyan-800/20' 
-            };
-        case 'theory': 
-            return { 
-                label: 'Teoria', 
-                icon: <BookOpen className={iconSize} />, 
-                color: 'border-purple-400 text-purple-300', 
-                bgGradient: 'from-purple-900/30 to-purple-800/20' 
-            };
-        case 'practice': 
-            return { 
-                label: 'Prática', 
-                icon: <PenTool className={iconSize} />, 
-                color: 'border-green-400 text-green-300', 
-                bgGradient: 'from-green-900/30 to-green-800/20' 
-            };
-        default: 
-            return { 
-                label: 'Conteúdo', 
-                icon: <FileText className={iconSize} />, 
-                color: 'border-gray-400 text-gray-300', 
-                bgGradient: 'from-gray-900/30 to-gray-800/20' 
-            };
-    }
-}, []);
+            switch (type) {
+                case 'article': return { label: 'Artigo', color: 'border-blue-400 text-blue-300', bgGradient: 'from-blue-900/30 to-blue-800/20' };
+                case 'lesson': return { label: 'Aula', color: 'border-cyan-400 text-cyan-300', bgGradient: 'from-cyan-900/30 to-cyan-800/20' };
+                case 'theory': return { label: 'Teoria', color: 'border-purple-400 text-purple-300', bgGradient: 'from-purple-900/30 to-purple-800/20' };
+                case 'practice': return { label: 'Prática', color: 'border-green-400 text-green-300', bgGradient: 'from-green-900/30 to-green-800/20' };
+                default: return { label: 'Conteúdo', color: 'border-gray-400 text-gray-300', bgGradient: 'from-gray-900/30 to-gray-800/20' };
+            }
+        }, []);
 
         const checkAnswer = useCallback((optionIndex) => {
             if (showResult) return;
@@ -1964,31 +1931,60 @@ if (lastCompleted) {
                                     }
                                 }
 
-                                const contentType = getContentTypeInfo(lesson.type);
-                                return (
-                                    <div key={lesson.id} onClick={() => !isLocked && onStartLesson(selectedTrail, lesson)} className={`bg-gradient-to-r ${contentType.bgGradient} rounded-2xl p-6 border ${isLocked ? 'opacity-50 cursor-not-allowed border-white/10' : 'hover:scale-[1.01] cursor-pointer border-white/20 hover:border-white/30'} transition-all`}>
-                                        <div className="flex items-start gap-5">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 font-bold text-lg ${isCompleted ? 'bg-green-500/20 text-green-300' : isLocked ? 'bg-white/5 text-white/30' : 'bg-cyan-500/20 text-cyan-300'}`}>{isLocked ? <Lock /> : isCompleted ? <Check /> : lessonIndex + 1}</div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-start justify-between gap-4 mb-2">
-                                                    <h4 className="font-bold text-lg">{lesson.title}</h4>
-                                                    <div className={`px-3 py-1 rounded-lg text-xs font-bold border flex items-center gap-1 whitespace-nowrap ${contentType.color}`}>{lesson.type === 'article' && <FileText className="w-3 h-3" />}{lesson.type === 'lesson' && <GraduationCap className="w-3 h-3" />}{lesson.type === 'theory' && <BookOpen className="w-3 h-3" />}{lesson.type === 'practice' && <PenTool className="w-3 h-3" />}{contentType.label}</div>
-                                                </div>
-                                                <div className="flex items-center gap-4 text-sm text-white/60 mb-3">
-                                                    <div className="flex items-center gap-1"><Clock />{lesson.duration}</div>
-                                                    <div className="flex items-center gap-1"><Star />+{lesson.xp} XP</div>
-                                                </div>
-                                                {!isLocked && (<button className="bg-white/10 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2">{isCompleted ? <><Check className="w-4 h-4" />Revisar</> : <><Play className="w-4 h-4" />Começar</>}</button>)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                {filteredLessons.map((lesson) => {
+    const lessonIndex = selectedTrail.lessons.findIndex(l => l.id === lesson.id);
+    const isCompleted = (userProgress.completedLessons || []).includes(lesson.id);
+    
+    let isLocked = false;
+    if (lessonIndex > 0) {
+        const previousLesson = selectedTrail.lessons[lessonIndex - 1];
+        if (!(userProgress.completedLessons || []).includes(previousLesson.id)) {
+            isLocked = true;
+        }
+    }
+
+    const contentType = getContentTypeInfo(lesson.type);
+    
+    return (
+        <div key={lesson.id} onClick={() => !isLocked && onStartLesson(selectedTrail, lesson)} className={`bg-gradient-to-r ${contentType.bgGradient} rounded-2xl p-6 border ${isLocked ? 'opacity-50 cursor-not-allowed border-white/10' : 'hover:scale-[1.01] cursor-pointer border-white/20 hover:border-white/30'} transition-all`}>
+            <div className="flex items-start gap-5">
+                {/* Ícone Lateral (Número ou Check) */}
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 font-bold text-lg ${isCompleted ? 'bg-green-500/20 text-green-300' : isLocked ? 'bg-white/5 text-white/30' : 'bg-cyan-500/20 text-cyan-300'}`}>
+                    {isLocked ? <Lock /> : isCompleted ? <Check /> : lessonIndex + 1}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                    {/* Cabeçalho com Título e Label alinhados */}
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                        <h4 className="font-bold text-lg leading-tight">{lesson.title}</h4>
+                        
+                        {/* LABEL AJUSTADA AQUI */}
+                        <div className={`px-3 py-1 rounded-lg text-xs font-bold border flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${contentType.color}`}>
+                            {lesson.type === 'article' && <FileText className="w-3 h-3" />}
+                            {lesson.type === 'lesson' && <GraduationCap className="w-3 h-3" />}
+                            {lesson.type === 'theory' && <BookOpen className="w-3 h-3" />}
+                            {lesson.type === 'practice' && <PenTool className="w-3 h-3" />}
+                            {contentType.label}
                         </div>
                     </div>
-                </main>
-            );
-        });
+
+                    {/* Informações de Tempo e XP */}
+                    <div className="flex items-center gap-4 text-sm text-white/60 mb-3">
+                        <div className="flex items-center gap-1"><Clock className="w-4 h-4" />{lesson.duration}</div>
+                        <div className="flex items-center gap-1"><Star className="w-4 h-4" />+{lesson.xp} XP</div>
+                    </div>
+
+                    {/* Botão de Ação */}
+                    {!isLocked && (
+                        <button className="bg-white/10 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2">
+                            {isCompleted ? <><Check className="w-4 h-4" />Revisar</> : <><Play className="w-4 h-4" />Começar</>}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+})}
         
         // --- COMPONENTE PARA VÍDEOS ---
     const VideoView = memo(({ currentLesson, onComplete, onBack }) => {
