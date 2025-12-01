@@ -26,10 +26,9 @@
     const Code = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>);
     const ChevronRight = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>);
     const ArrowLeft = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>);
-    const BookOpen = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);
-    const PenTool = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-1.5"/><path d="m2 2 7.586 7.586"/><path d="m11 11 1 1"/></svg>);
-    const GraduationCap = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0l8.59-3.9z"/><path d="M6 12v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5"/></svg>);
-    const FileText = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>);
+    const BookOpen = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);    
+    const PenTool = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-1.5"/><path d="m2 2 7.586 7.586"/><path d="m11 11 1 1"/></svg>);    const GraduationCap = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0l8.59-3.9z"/><path d="M6 12v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5"/></svg>);
+    const FileText = memo(({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>);
     const Play = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>);
     const Clock = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>);
     const User = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);    const Edit2 = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5 Z"/><path d="m15 5 4 4"/></svg>); // Novo ícone
@@ -1414,14 +1413,47 @@ if (lastCompleted) {
         };
         
         const getContentTypeInfo = useCallback((type) => {
-            switch (type) {
-                case 'article': return { label: 'Artigo', icon: <FileText />, color: 'border-blue-400 text-blue-300', bgGradient: 'from-blue-900/30 to-blue-800/20' };
-                case 'lesson': return { label: 'Aula', icon: <GraduationCap />, color: 'border-cyan-400 text-cyan-300', bgGradient: 'from-cyan-900/30 to-cyan-800/20' };
-                case 'theory': return { label: 'Teoria', icon: <BookOpen />, color: 'border-purple-400 text-purple-300', bgGradient: 'from-purple-900/30 to-purple-800/20' };
-                case 'practice': return { label: 'Prática', icon: <PenTool />, color: 'border-green-400 text-green-300', bgGradient: 'from-green-900/30 to-green-800/20' };
-                default: return { label: 'Conteúdo', icon: <FileText />, color: 'border-gray-400 text-gray-300', bgGradient: 'from-gray-900/30 to-gray-800/20' };
-            }
-        }, []);
+    // Definimos o tamanho aqui para ficar igual em todos
+    const iconSize = "w-3 h-3 md:w-4 md:h-4"; 
+
+    switch (type) {
+        case 'article': 
+            return { 
+                label: 'Artigo', 
+                icon: <FileText className={iconSize} />, // Passando a classe
+                color: 'border-blue-400 text-blue-300', 
+                bgGradient: 'from-blue-900/30 to-blue-800/20' 
+            };
+        case 'lesson': 
+            return { 
+                label: 'Aula', 
+                icon: <GraduationCap className={iconSize} />, 
+                color: 'border-cyan-400 text-cyan-300', 
+                bgGradient: 'from-cyan-900/30 to-cyan-800/20' 
+            };
+        case 'theory': 
+            return { 
+                label: 'Teoria', 
+                icon: <BookOpen className={iconSize} />, 
+                color: 'border-purple-400 text-purple-300', 
+                bgGradient: 'from-purple-900/30 to-purple-800/20' 
+            };
+        case 'practice': 
+            return { 
+                label: 'Prática', 
+                icon: <PenTool className={iconSize} />, 
+                color: 'border-green-400 text-green-300', 
+                bgGradient: 'from-green-900/30 to-green-800/20' 
+            };
+        default: 
+            return { 
+                label: 'Conteúdo', 
+                icon: <FileText className={iconSize} />, 
+                color: 'border-gray-400 text-gray-300', 
+                bgGradient: 'from-gray-900/30 to-gray-800/20' 
+            };
+    }
+}, []);
 
         const checkAnswer = useCallback((optionIndex) => {
             if (showResult) return;
@@ -1910,11 +1942,11 @@ if (lastCompleted) {
                     </div>
                     <div className="bg-black/20 backdrop-blur-md rounded-2xl p-8 border border-white/10">
                         <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-2 -mx-8 px-8">
-                            <button onClick={() => onFilterChange('all')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${filterType === 'all' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>Todos</button>
-                            <button onClick={() => onFilterChange('article')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'article' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><FileText className="w-4 h-4" />Artigos</button>
-                            <button onClick={() => onFilterChange('lesson')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'lesson' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><GraduationCap className="w-4 h-4" />Aulas</button>
-                            <button onClick={() => onFilterChange('theory')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'theory' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><BookOpen className="w-4 h-4" />Teoria</button>
-                            <button onClick={() => onFilterChange('practice')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'practice' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><PenTool className="w-4 h-4" />Prática</button>
+                            <button onClick={() => onFilterChange('all')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${filterType === 'all' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>Todos</button>
+                            <button onClick={() => onFilterChange('article')} className={`px-4 py-2  w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'article' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><FileText className="w-4 h-4" />Artigos</button>
+                            <button onClick={() => onFilterChange('lesson')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'lesson' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><GraduationCap className="w-4 h-4" />Aulas</button>
+                            <button onClick={() => onFilterChange('theory')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'theory' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><BookOpen className="w-4 h-4" />Teoria</button>
+                            <button onClick={() => onFilterChange('practice')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'practice' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><PenTool className="w-4 h-4" />Prática</button>
                         </div>
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><BookOpen />Conteúdo da Trilha</h3>
                         <div className="space-y-4">
