@@ -1920,14 +1920,15 @@ if (lastCompleted) {
         
                     {/* Lista de Lições */}
                     <div className="bg-black/20 backdrop-blur-md rounded-2xl p-4 md:p-8 border border-white/10">
-                        {/* Filtros (Scroll horizontal no mobile) */}
-                        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
-                            {/* Botões de filtro mantidos iguais, apenas ajustei padding/gap para mobile */}
-                            <button onClick={() => onFilterChange('all')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${filterType === 'all' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>Todos</button>
-                            <button onClick={() => onFilterChange('article')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'article' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><FileText className="w-4 h-4" />Artigos</button>
-                            <button onClick={() => onFilterChange('lesson')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'lesson' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><GraduationCap className="w-4 h-4" />Aulas</button>
-                            <button onClick={() => onFilterChange('theory')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'theory' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><BookOpen className="w-4 h-4" />Teoria</button>
-                            <button onClick={() => onFilterChange('practice')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'practice' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><PenTool className="w-4 h-4" />Prática</button>
+                        
+                        {/* --- FILTROS CORRIGIDOS --- */}
+                        {/* Adicionei 'flex-nowrap' no container e 'flex-shrink-0' nos botões para não esmagarem */}
+                        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 flex-nowrap">
+                            <button onClick={() => onFilterChange('all')} className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${filterType === 'all' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>Todos</button>
+                            <button onClick={() => onFilterChange('article')} className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'article' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><FileText className="w-4 h-4" />Artigos</button>
+                            <button onClick={() => onFilterChange('lesson')} className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'lesson' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><GraduationCap className="w-4 h-4" />Aulas</button>
+                            <button onClick={() => onFilterChange('theory')} className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'theory' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><BookOpen className="w-4 h-4" />Teoria</button>
+                            <button onClick={() => onFilterChange('practice')} className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'practice' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><PenTool className="w-4 h-4" />Prática</button>
                         </div>
         
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><BookOpen className="w-6 h-6"/>Conteúdo da Trilha</h3>
@@ -1950,19 +1951,20 @@ if (lastCompleted) {
                                 return (
                                     <div key={lesson.id} onClick={() => !isLocked && onStartLesson(selectedTrail, lesson)} className={`bg-gradient-to-r ${contentType.bgGradient} rounded-2xl p-5 md:p-6 border ${isLocked ? 'opacity-50 cursor-not-allowed border-white/10' : 'hover:scale-[1.01] cursor-pointer border-white/20 hover:border-white/30'} transition-all`}>
                                         <div className="flex items-start gap-4 md:gap-5">
-                                            {/* Ícone Lateral (Número ou Check) */}
+                                            {/* Ícone Lateral */}
                                             <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center flex-shrink-0 font-bold text-lg ${isCompleted ? 'bg-green-500/20 text-green-300' : isLocked ? 'bg-white/5 text-white/30' : 'bg-cyan-500/20 text-cyan-300'}`}>
                                                 {isLocked ? <Lock className="w-5 h-5 md:w-6 md:h-6" /> : isCompleted ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : lessonIndex + 1}
                                             </div>
         
                                             <div className="flex-1 min-w-0">
-                                                {/* --- CABEÇALHO RESPONSIVO AQUI --- */}
-                                                {/* flex-col no mobile (pilha), flex-row no desktop (lado a lado) */}
+                                                {/* Cabeçalho */}
                                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
                                                     <h4 className="font-bold text-base md:text-lg leading-tight">{lesson.title}</h4>
                                                     
-                                                    {/* Label com self-start para não esticar no mobile */}
-                                                    <div className={`self-start px-3 py-1 rounded-lg text-xs font-bold border flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${contentType.color}`}>
+                                                    {/* --- LABEL COM LARGURA FIXA NO DESKTOP --- */}
+                                                    {/* 'md:w-24 justify-center': Fixa largura no PC e centraliza o conteúdo */}
+                                                    {/* 'self-start': Mantém tamanho natural no mobile */}
+                                                    <div className={`self-start px-3 py-1 rounded-lg text-xs font-bold border flex items-center md:justify-center gap-1 whitespace-nowrap flex-shrink-0 md:w-24 ${contentType.color}`}>
                                                         {lesson.type === 'article' && <FileText className="w-3 h-3" />}
                                                         {lesson.type === 'lesson' && <GraduationCap className="w-3 h-3" />}
                                                         {lesson.type === 'theory' && <BookOpen className="w-3 h-3" />}
@@ -1977,7 +1979,7 @@ if (lastCompleted) {
                                                     <div className="flex items-center gap-1"><Star className="w-3 h-3 md:w-4 md:h-4" />+{lesson.xp} XP</div>
                                                 </div>
         
-                                                {/* Botão Responsivo */}
+                                                {/* Botão */}
                                                 {!isLocked && (
                                                     <button className="w-full sm:w-auto justify-center bg-white/10 text-white px-6 py-3 md:py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2">
                                                         {isCompleted ? <><Check className="w-4 h-4" />Revisar</> : <><Play className="w-4 h-4" />Começar</>}
