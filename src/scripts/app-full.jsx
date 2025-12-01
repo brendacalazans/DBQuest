@@ -1900,24 +1900,24 @@ if (lastCompleted) {
             return (
                 <main className="max-w-5xl mx-auto px-6 py-8 animate-fade-in">
                     <button onClick={onBack} className="flex items-center gap-2 text-white/60 hover:text-white mb-6">
-                        <ArrowLeft /> Voltar para as Trilhas
+                        <ArrowLeft className="w-5 h-5" /> Voltar para as Trilhas
                     </button>
                     <div className={`bg-gradient-to-r ${selectedTrail.color} rounded-2xl p-8 mb-8 border border-white/20`}>
                         <div className="flex items-center justify-between mb-4">
                             <div className="text-6xl">{selectedTrail.icon}</div>
-                            <div className="text-right"><div className="text-3xl font-bold">{(((selectedTrail.lessons.filter(l => (userProgress.completedLessons || []).includes(l.id)).length) / selectedTrail.lessons.length) * 100).toFixed(0)}%</div><div className="text-white/70">Completo</div></div>
+                            <div className="text-right"><div className="text-3xl font-bold">{selectedTrail.lessons.length > 0 ? (((selectedTrail.lessons.filter(l => (userProgress.completedLessons || []).includes(l.id)).length) / selectedTrail.lessons.length) * 100).toFixed(0) : 0}%</div><div className="text-white/70">Completo</div></div>
                         </div>
                         <h2 className="text-3xl font-bold mb-2">{selectedTrail.title}</h2><p className="text-white/80 mb-6 max-w-2xl">{selectedTrail.description}</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-md rounded-2xl p-8 border border-white/10">
                         <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-2 -mx-8 px-8">
-                            <button onClick={() => onFilterChange('all')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${filterType === 'all' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>Todos</button>
-                            <button onClick={() => onFilterChange('article')} className={`px-4 py-2  w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'article' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><FileText className="w-4 h-4" />Artigos</button>
-                            <button onClick={() => onFilterChange('lesson')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'lesson' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><GraduationCap className="w-4 h-4" />Aulas</button>
-                            <button onClick={() => onFilterChange('theory')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'theory' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><BookOpen className="w-4 h-4" />Teoria</button>
-                            <button onClick={() => onFilterChange('practice')} className={`px-4 py-2 w-full md:w-auto rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'practice' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><PenTool className="w-4 h-4" />Prática</button>
+                            <button onClick={() => onFilterChange('all')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${filterType === 'all' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>Todos</button>
+                            <button onClick={() => onFilterChange('article')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'article' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><FileText className="w-4 h-4" />Artigos</button>
+                            <button onClick={() => onFilterChange('lesson')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'lesson' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><GraduationCap className="w-4 h-4" />Aulas</button>
+                            <button onClick={() => onFilterChange('theory')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'theory' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><BookOpen className="w-4 h-4" />Teoria</button>
+                            <button onClick={() => onFilterChange('practice')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${filterType === 'practice' ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}><PenTool className="w-4 h-4" />Prática</button>
                         </div>
-                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><BookOpen />Conteúdo da Trilha</h3>
+                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><BookOpen className="w-6 h-6"/>Conteúdo da Trilha</h3>
                         <div className="space-y-4">
                             {filteredLessons.map((lesson) => {
                                 const lessonIndex = selectedTrail.lessons.findIndex(l => l.id === lesson.id);
@@ -1931,60 +1931,49 @@ if (lastCompleted) {
                                     }
                                 }
 
-                                {filteredLessons.map((lesson) => {
-    const lessonIndex = selectedTrail.lessons.findIndex(l => l.id === lesson.id);
-    const isCompleted = (userProgress.completedLessons || []).includes(lesson.id);
-    
-    let isLocked = false;
-    if (lessonIndex > 0) {
-        const previousLesson = selectedTrail.lessons[lessonIndex - 1];
-        if (!(userProgress.completedLessons || []).includes(previousLesson.id)) {
-            isLocked = true;
-        }
-    }
+                                const contentType = getContentTypeInfo(lesson.type);
+                                
+                                return (
+                                    <div key={lesson.id} onClick={() => !isLocked && onStartLesson(selectedTrail, lesson)} className={`bg-gradient-to-r ${contentType.bgGradient} rounded-2xl p-6 border ${isLocked ? 'opacity-50 cursor-not-allowed border-white/10' : 'hover:scale-[1.01] cursor-pointer border-white/20 hover:border-white/30'} transition-all`}>
+                                        <div className="flex items-start gap-5">
+                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 font-bold text-lg ${isCompleted ? 'bg-green-500/20 text-green-300' : isLocked ? 'bg-white/5 text-white/30' : 'bg-cyan-500/20 text-cyan-300'}`}>
+                                                {isLocked ? <Lock className="w-6 h-6" /> : isCompleted ? <Check className="w-6 h-6" /> : lessonIndex + 1}
+                                            </div>
 
-    const contentType = getContentTypeInfo(lesson.type);
-    
-    return (
-        <div key={lesson.id} onClick={() => !isLocked && onStartLesson(selectedTrail, lesson)} className={`bg-gradient-to-r ${contentType.bgGradient} rounded-2xl p-6 border ${isLocked ? 'opacity-50 cursor-not-allowed border-white/10' : 'hover:scale-[1.01] cursor-pointer border-white/20 hover:border-white/30'} transition-all`}>
-            <div className="flex items-start gap-5">
-                {/* Ícone Lateral (Número ou Check) */}
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 font-bold text-lg ${isCompleted ? 'bg-green-500/20 text-green-300' : isLocked ? 'bg-white/5 text-white/30' : 'bg-cyan-500/20 text-cyan-300'}`}>
-                    {isLocked ? <Lock /> : isCompleted ? <Check /> : lessonIndex + 1}
-                </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-start justify-between gap-4 mb-2">
+                                                    <h4 className="font-bold text-lg leading-tight">{lesson.title}</h4>
+                                                    
+                                                    {/* LABEL CORRIGIDA AQUI */}
+                                                    <div className={`px-3 py-1 rounded-lg text-xs font-bold border flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${contentType.color}`}>
+                                                        {lesson.type === 'article' && <FileText className="w-3 h-3" />}
+                                                        {lesson.type === 'lesson' && <GraduationCap className="w-3 h-3" />}
+                                                        {lesson.type === 'theory' && <BookOpen className="w-3 h-3" />}
+                                                        {lesson.type === 'practice' && <PenTool className="w-3 h-3" />}
+                                                        {contentType.label}
+                                                    </div>
+                                                </div>
 
-                <div className="flex-1 min-w-0">
-                    {/* Cabeçalho com Título e Label alinhados */}
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                        <h4 className="font-bold text-lg leading-tight">{lesson.title}</h4>
-                        
-                        {/* LABEL AJUSTADA AQUI */}
-                        <div className={`px-3 py-1 rounded-lg text-xs font-bold border flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${contentType.color}`}>
-                            {lesson.type === 'article' && <FileText className="w-3 h-3" />}
-                            {lesson.type === 'lesson' && <GraduationCap className="w-3 h-3" />}
-                            {lesson.type === 'theory' && <BookOpen className="w-3 h-3" />}
-                            {lesson.type === 'practice' && <PenTool className="w-3 h-3" />}
-                            {contentType.label}
+                                                <div className="flex items-center gap-4 text-sm text-white/60 mb-3">
+                                                    <div className="flex items-center gap-1"><Clock className="w-4 h-4" />{lesson.duration}</div>
+                                                    <div className="flex items-center gap-1"><Star className="w-4 h-4" />+{lesson.xp} XP</div>
+                                                </div>
+
+                                                {!isLocked && (
+                                                    <button className="bg-white/10 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2">
+                                                        {isCompleted ? <><Check className="w-4 h-4" />Revisar</> : <><Play className="w-4 h-4" />Começar</>}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
-
-                    {/* Informações de Tempo e XP */}
-                    <div className="flex items-center gap-4 text-sm text-white/60 mb-3">
-                        <div className="flex items-center gap-1"><Clock className="w-4 h-4" />{lesson.duration}</div>
-                        <div className="flex items-center gap-1"><Star className="w-4 h-4" />+{lesson.xp} XP</div>
-                    </div>
-
-                    {/* Botão de Ação */}
-                    {!isLocked && (
-                        <button className="bg-white/10 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2">
-                            {isCompleted ? <><Check className="w-4 h-4" />Revisar</> : <><Play className="w-4 h-4" />Começar</>}
-                        </button>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-})}
+                </main>
+            );
+        });
         
         // --- COMPONENTE PARA VÍDEOS ---
     const VideoView = memo(({ currentLesson, onComplete, onBack }) => {
