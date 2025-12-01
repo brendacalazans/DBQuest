@@ -2252,44 +2252,63 @@ if (lastCompleted) {
 
         // --- Componente ProfileView (NOVO) ---
         // Este componente agora gerencia seu próprio estado de toast
+        // --- Componente ProfileView (ATUALIZADO COM API KEY) ---
         const ProfileView = memo(({ userProgress, onLogout, onSaveProfile }) => {
             const [isEditing, setIsEditing] = useState(false);
             const [name, setName] = useState(userProgress.username);
             const [avatar, setAvatar] = useState(userProgress.avatar || '👤');
-            const [localToast, setLocalToast] = useState(null); // Estado de toast local
+            
+            // Estado para a Chave da API
+            const [apiKey, setApiKey] = useState('');
+            const [showKey, setShowKey] = useState(false);
+
+            const [localToast, setLocalToast] = useState(null);
             const [isSaving, setIsSaving] = useState(false);
 
-            // Emojis para seleção
+            // Carrega a chave salva ao montar o componente
+            useEffect(() => {
+                const savedKey = localStorage.getItem('dbquest_gemini_api_key');
+                if (savedKey) setApiKey(savedKey);
+            }, []);
+
             const avatarOptions = ['👤', '🧑‍💻', '🚀', '💡', '🧠', '⚡', '🏆', '🎯', '💾', '🤖', '👑', '🧙'];
-            
-            const initials = getInitials(userProgress.username);
+            const initials = userProgress.username ? userProgress.username.substring(0, 2).toUpperCase() : '👤';
 
             const handleSave = async () => {
                 setIsSaving(true);
                 setLocalToast(null);
                 try {
-                    // onSaveProfile agora lança um erro se falhar
+                    // Salva perfil no Firebase
                     await onSaveProfile(name, avatar);
-                    setLocalToast({ message: "Perfil atualizado com sucesso!", type: 'success' });
+                    
+                    // Salva API Key no LocalStorage (NÃO no banco de dados por segurança)
+                    if (apiKey.trim()) {
+                        localStorage.setItem('dbquest_gemini_api_key', apiKey.trim());
+                    } else {
+                        localStorage.removeItem('dbquest_gemini_api_key');
+                    }
+
+                    setLocalToast({ message: "Perfil e Configurações salvos!", type: 'success' });
                     setIsEditing(false);
                 } catch (error) {
-                    console.error("Erro ao salvar perfil:", error);
-                    // Exibe o erro vindo da função
-                    setLocalToast({ message: error.message || "Erro ao salvar perfil.", type: 'error' });
+                    console.error("Erro ao salvar:", error);
+                    setLocalToast({ message: error.message || "Erro ao salvar.", type: 'error' });
                 } finally {
                     setIsSaving(false);
                 }
             };
 
             const handleCancel = () => {
-                // Reseta para os valores originais
                 setName(userProgress.username);
                 setAvatar(userProgress.avatar || '👤');
+                // Recarrega a chave original
+                const savedKey = localStorage.getItem('dbquest_gemini_api_key');
+                setApiKey(savedKey || '');
                 setIsEditing(false);
                 setLocalToast(null);
             };
-            
-            // Atualiza o estado local se o userProgress (do DB) mudar
+
+            // Atualiza inputs se os props mudarem externamente
             useEffect(() => {
                 if (!isEditing) {
                     setName(userProgress.username);
@@ -2299,20 +2318,26 @@ if (lastCompleted) {
 
             return (
                 <main className="max-w-3xl mx-auto px-6 py-8 animate-fade-in">
-                    {/* Renderiza o toast local */}
                     {localToast && <Toast message={localToast.message} type={localToast.type} onDismiss={() => setLocalToast(null)} />}
                     
                     <h2 className="text-3xl font-bold text-white mb-8">Meu Perfil</h2>
 
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
                         {!isEditing ? (
-                            // --- MODO DE VISUALIZAÇÃO ---
+                            // --- MODO VISUALIZAÇÃO ---
                             <div className="flex flex-col items-center">
-                                <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center text-6xl mb-6">
+                                <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center text-6xl mb-6 border-4 border-white/10">
                                     {userProgress.avatar ? userProgress.avatar : initials}
                                 </div>
-                                <h3 className="text-3xl font-bold mb-6">{userProgress.username}</h3>
+                                <h3 className="text-3xl font-bold mb-2">{userProgress.username}</h3>
+                                <p className="text-white/60 mb-6 text-sm flex items-center gap-2">
+                                    {localStorage.getItem('dbquest_gemini_api_key') ? 
+                                        <><Check className="w-4 h-4 text-green-400"/> IA Ativada</> : 
+                                        <><X className="w-4 h-4 text-red-400"/> IA Não Configurada</>
+                                    }
+                                </p>
                                 
+                                {/* Status Grid (mantido igual) */}
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full text-center mb-8">
                                     <div className="bg-white/5 p-4 rounded-xl"><div className="text-3xl font-bold">{userProgress.level}</div><div className="text-white/60">Nível</div></div>
                                     <div className="bg-white/5 p-4 rounded-xl"><div className="text-3xl font-bold">{userProgress.totalXP}</div><div className="text-white/60">Total XP</div></div>
@@ -2324,40 +2349,70 @@ if (lastCompleted) {
                                     onClick={() => setIsEditing(true)}
                                     className="w-full max-w-xs bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                                 >
-                                    <Edit2 className="w-5 h-5" /> Editar Perfil
+                                    <Edit2 className="w-5 h-5" /> Editar Perfil e Configurações
                                 </button>
                             </div>
                         ) : (
-                            // --- MODO de EDIÇÃO ---
-                            <div className="flex flex-col items-center">
-                                <div className="text-6xl mb-6">{avatar}</div>
+                            // --- MODO EDIÇÃO ---
+                            <div className="flex flex-col items-center w-full">
+                                <div className="text-6xl mb-6 p-4 bg-white/5 rounded-full">{avatar}</div>
                                 
-                                <div className="mb-6 w-full">
-                                    <label className="block text-sm font-medium text-white/80 mb-2">Escolha seu Avatar</label>
-                                    <div className="flex flex-wrap gap-3 justify-center">
+                                {/* Seleção de Avatar */}
+                                <div className="mb-8 w-full">
+                                    <label className="block text-sm font-bold text-white/80 mb-3 text-center">Escolha seu Avatar</label>
+                                    <div className="flex flex-wrap gap-3 justify-center bg-black/20 p-4 rounded-xl">
                                         {avatarOptions.map(opt => (
-                                            <button
-                                                key={opt}
-                                                onClick={() => setAvatar(opt)}
-                                                className={`w-12 h-12 text-2xl rounded-full transition-all ${avatar === opt ? 'bg-cyan-500 scale-110' : 'bg-white/10 hover:bg-white/20'}`}
-                                            >
+                                            <button key={opt} onClick={() => setAvatar(opt)} className={`w-12 h-12 text-2xl rounded-lg transition-all ${avatar === opt ? 'bg-cyan-500 scale-110 shadow-lg shadow-cyan-500/50' : 'bg-white/10 hover:bg-white/20'}`}>
                                                 {opt}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div className="mb-6 w-full max-w-md">
-                                    <label className="block text-sm font-medium text-white/80 mb-2">Nome de Usuário</label>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white"
-                                    />
+                                {/* Inputs */}
+                                <div className="w-full max-w-md space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-white/80 mb-2">Nome de Usuário</label>
+                                        <input
+                                            type="text"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white focus:border-cyan-500 focus:outline-none transition-colors"
+                                        />
+                                    </div>
+
+                                    {/* Configuração da Chave Gemini */}
+                                    <div className="bg-purple-900/30 p-4 rounded-xl border border-purple-500/30">
+                                        <label className="block text-sm font-bold text-purple-200 mb-2 flex items-center gap-2">
+                                            <Sparkles className="w-4 h-4"/> Chave API Gemini (Google AI)
+                                        </label>
+                                        <p className="text-xs text-white/60 mb-3">Necessária para os desafios de IA e explicações. Salva apenas no seu navegador.</p>
+                                        <div className="relative">
+                                            <input
+                                                type={showKey ? "text" : "password"}
+                                                value={apiKey}
+                                                onChange={(e) => setApiKey(e.target.value)}
+                                                placeholder="Cole sua chave AIza..."
+                                                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white focus:border-purple-500 focus:outline-none transition-colors pr-10"
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => setShowKey(!showKey)}
+                                                className="absolute right-3 top-3.5 text-white/40 hover:text-white"
+                                            >
+                                                {showKey ? <Lock className="w-4 h-4"/> : <User className="w-4 h-4"/>}
+                                            </button>
+                                        </div>
+                                        <div className="mt-2 text-right">
+                                            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-xs text-cyan-400 hover:text-cyan-300 underline">
+                                                Gerar chave no Google AI Studio
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div className="flex gap-4 w-full max-w-md">
+                                {/* Botões de Ação */}
+                                <div className="flex gap-4 w-full max-w-md mt-8">
                                     <button
                                         onClick={handleCancel}
                                         disabled={isSaving}
@@ -2368,28 +2423,23 @@ if (lastCompleted) {
                                     <button
                                         onClick={handleSave}
                                         disabled={isSaving}
-                                        className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
+                                        className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 shadow-lg shadow-cyan-500/20"
                                     >
-                                        {isSaving ? "Salvando..." : "Salvar"}
+                                        {isSaving ? "Salvando..." : "Salvar Alterações"}
                                     </button>
                                 </div>
                             </div>
                         )}
 
-                        {/* Botão de Logout sempre visível */}
                         <div className="border-t border-white/10 mt-8 pt-8 text-center">
-                            <button
-                                onClick={onLogout}
-                                className="text-red-400 hover:text-red-300 font-semibold"
-                            >
-                                Terminar Sessão
+                            <button onClick={onLogout} className="text-red-400 hover:text-red-300 font-semibold text-sm flex items-center justify-center gap-2 mx-auto">
+                                <X className="w-4 h-4" /> Sair da Conta
                             </button>
                         </div>
                     </div>
                 </main>
             );
         });
-
         // --- Salvar Perfil ---
         // MUDANÇA: handleSaveProfile agora lança erros em vez de chamar setToast
         const handleSaveProfile = useCallback(async (newName, newAvatar) => {
@@ -2423,7 +2473,7 @@ if (lastCompleted) {
 
         // --- Funções da API Gemini ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            const apiKey = "";
+            const apiKey = "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
