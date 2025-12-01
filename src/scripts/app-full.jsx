@@ -1173,6 +1173,7 @@
         }, []);
 
         // Efeito: Verifica resultado do redirecionamento do Google (ATUALIZADO)
+        // Efeito: Verifica resultado do redirecionamento do Google (ATUALIZADO)
         useEffect(() => {
             const checkRedirect = async () => {
                 try {
@@ -1182,13 +1183,15 @@
                         
                         // Verifica se o usuário já existe no DB
                         const userRef = ref(db, `users/${user.uid}`);
-                        const snapshot = await get(userRef);
+                        
+                        // O ERRO DE GET ACONTECE AQUI SE NÃO FIZER O PASSO 1
+                        const snapshot = await get(userRef); 
 
                         if (!snapshot.exists()) {
                             // Cria novo usuário com dados do Google
                             const newUser = {
                                 name: user.displayName || 'Novo Aluno',
-                                avatar: user.photoURL || '👤', // Usa foto do Google se disponível
+                                avatar: user.photoURL || '👤', 
                                 email: user.email,
                                 joinedDate: new Date().toISOString(),
                                 gamification: {
@@ -1225,7 +1228,9 @@
             if (isAuthChecked) {
                 checkRedirect();
             }
-        }, [isAuthChecked, auth, db]); // Dependências atualizadas
+        // Certifique-se que 'get' está nas dependências abaixo se o linter reclamar, 
+        // mas como vem do window.FB, às vezes não é necessário listar.
+        }, [isAuthChecked, auth, db]);
 
         // Efeito: Carregar Dados do Usuário e Trilha
         useEffect(() => {
