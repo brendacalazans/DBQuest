@@ -40,14 +40,13 @@
         const auth = getAuth(app);
 
         // Redireciona baseado no estado de autenticação
-        window.FB = {
-            auth,
-            db,
-            onAuthStateChanged,
-            signOut, // <--- Adicione aqui
-            get,     // <--- Adicione aqui
-            // ... outras funções (set, update, ref, etc)
-          };
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = '/src/pages/home.html';
+            } else {
+                window.location.href = '/src/pages/auth.html';
+            }
+        });
     </script>
     
     <style>
