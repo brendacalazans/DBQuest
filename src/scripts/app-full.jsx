@@ -1172,28 +1172,60 @@
             return () => unsubscribe(); // Limpa ao desmontar
         }, []);
 
+        // Efeito: Verifica resultado do redirecionamento do Google (ATUALIZADO)
         useEffect(() => {
-            // Verifica se o usuário está voltando de um login por redirect
             const checkRedirect = async () => {
                 try {
                     const result = await getRedirectResult(auth);
                     if (result) {
-                        // Login bem-sucedido. O onAuthStateChanged
-                        // também será disparado, mas podemos por um toast aqui.
-                        setToast({ message: `Bem-vindo, ${result.user.displayName}!`, type: 'success' });
+                        const user = result.user;
+                        
+                        // Verifica se o usuário já existe no DB
+                        const userRef = ref(db, `users/${user.uid}`);
+                        const snapshot = await get(userRef);
+
+                        if (!snapshot.exists()) {
+                            // Cria novo usuário com dados do Google
+                            const newUser = {
+                                name: user.displayName || 'Novo Aluno',
+                                avatar: user.photoURL || '👤', // Usa foto do Google se disponível
+                                email: user.email,
+                                joinedDate: new Date().toISOString(),
+                                gamification: {
+                                    level: 1,
+                                    totalXP: 0,
+                                    streak: 0,
+                                    gems: 100,
+                                    lives: 5,
+                                    completedLessons: [],
+                                    lastCompletedLessonDate: null,
+                                    lastLifeResetDate: new Date().setHours(0,0,0,0)
+                                },
+                                cooldownUntil: null
+                            };
+                            await set(userRef, newUser);
+                            
+                            // Adiciona ao leaderboard
+                            await set(ref(db, `leaderboard/${user.uid}`), {
+                                username: newUser.name,
+                                totalXP: 0,
+                                avatar: newUser.avatar
+                            });
+                        }
+                        
+                        setToast({ message: `Bem-vindo, ${user.displayName}!`, type: 'success' });
                     }
                 } catch (error) {
-                    // Trata erros do redirect (ex: email já em uso com outro método)
-                    console.error("Erro ao obter resultado do redirect:", error);
-                    setToast({ message: "Erro no login: " + error.message, type: 'error' });
+                    console.error("Erro no login Google:", error);
+                    setToast({ message: "Erro ao entrar com Google.", type: 'error' });
                 }
             };
             
-            // Só executa quando a verificação de auth inicial estiver pronta
+            // Executa apenas se o auth já foi inicializado
             if (isAuthChecked) {
                 checkRedirect();
             }
-        }, [isAuthChecked, auth, getRedirectResult]); // Adicione as dependências
+        }, [isAuthChecked, auth, db]); // Dependências atualizadas
 
         // Efeito: Carregar Dados do Usuário e Trilha
         useEffect(() => {
