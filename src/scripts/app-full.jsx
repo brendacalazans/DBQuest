@@ -32,8 +32,8 @@
     const FileText = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>);
     const Play = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>);
     const Clock = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>);
-    const User = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);
-    const Edit2 = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>); // Novo ícone
+    const User = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);    const Edit2 = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5 Z"/><path d="m15 5 4 4"/></svg>); // Novo ícone
+    const Menu = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>);
 
   
     const REWARD_CONFIG = {
@@ -1256,21 +1256,25 @@
                         }
 
                         // Check for streak reset
-                        const lastCompleted = data.lastCompletedLessonDate ? new Date(data.lastCompletedLessonDate) : null;
-                        if (lastCompleted) {
-                            const yesterday = new Date(today);
-                            yesterday.setDate(yesterday.getDate() - 1);
-                            
-                            // Se a última lição completada foi ANTES de ontem, zera a ofensiva
-                            if (lastCompleted.getTime() < yesterday.getTime()) {
-                                updates['gamification/streak'] = 0;
-                                needsUpdate = true;
-                            }
-                        }
+                       const lastCompleted = data.gamification?.lastCompletedLessonDate 
+    ? new Date(data.gamification.lastCompletedLessonDate) 
+    : null;
 
-                        if (needsUpdate) {
-                            await update(userRef, updates);
-                        }
+if (lastCompleted) {
+    lastCompleted.setHours(0, 0, 0, 0);  // ✅ CORREÇÃO: Zera as horas para comparar apenas o dia
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);  // ✅ CORREÇÃO: Zera as horas do yesterday também
+    
+    // Se a última lição completada foi ANTES de ontem, zera a ofensiva
+    if (lastCompleted.getTime() < yesterday.getTime()) {
+        updates['gamification/streak'] = 0;
+        needsUpdate = true;
+        console.log("Streak resetado - usuário não completou lição ontem");
+    }
+}
+
                         
                         // Atualiza o estado local com os dados do DB (e possíveis atualizações)
                         setUserProgress({
@@ -1623,26 +1627,144 @@
 
         // --- Componentes Memoizados ---
         const Header = memo(({ userProgress, onNavigate }) => {
-            const initials = getInitials(userProgress.username); // Get initials
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const initials = getInitials(userProgress.username);
+            
             return (
-                <header className="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-20">
-                    <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('home')}>
-                        <Database className="w-8 h-8 text-cyan-300" />
-                        <h1 className="text-2xl font-bold">DBQuest</h1>
+                <header className="header">
+                    <div className="header-container">
+                        {/* Logo */}
+                        <div 
+                            className="header-logo" 
+                            onClick={() => onNavigate('home')}
+                            role="button"
+                            tabIndex={0}
+                            onKeyPress={(e) => e.key === 'Enter' && onNavigate('home')}
+                            aria-label="DBQuest - Ir para página inicial"
+                        >
+                            <Database className="header-logo-icon" />
+                            <h1 className="header-logo-text">DBQuest</h1>
+                        </div>
+                        
+                        {/* Navegação Desktop */}
+                        <nav className="header-nav" aria-label="Navegação principal">
+                            <button 
+                                onClick={() => onNavigate('home')} 
+                                className="header-nav-btn"
+                                aria-label="Ir para Trilhas"
+                            >
+                                <Target className="header-nav-icon" />
+                                <span>Trilhas</span>
+                            </button>
+                            <button 
+                                onClick={() => onNavigate('ranking')} 
+                                className="header-nav-btn"
+                                aria-label="Ir para Ranking"
+                            >
+                                <Trophy className="header-nav-icon" />
+                                <span>Ranking</span>
+                            </button>
+                        </nav>
+                        
+                        {/* Estatísticas do Usuário */}
+                        <div className="header-user">
+                            <div className="header-stats">
+                                <div className="header-stat" aria-label={`Ofensiva: ${userProgress.streak} dias`}>
+                                    <Flame className="header-stat-icon" style={{ color: '#fb923c' }} />
+                                    <span className="header-stat-value">{userProgress.streak}</span>
+                                </div>
+                                <div className="header-stat" aria-label={`Gemas: ${userProgress.gems}`}>
+                                    <Gem className="header-stat-icon" style={{ color: '#22d3ee' }} />
+                                    <span className="header-stat-value">{userProgress.gems}</span>
+                                </div>
+                                <div className="header-stat" aria-label={`Vidas: ${userProgress.lives}`}>
+                                    <Heart 
+                                        className="header-stat-icon" 
+                                        style={{ color: userProgress.lives > 0 ? '#f87171' : '#9ca3af' }} 
+                                    />
+                                    <span className="header-stat-value">{userProgress.lives}</span>
+                                </div>
+                            </div>
+                            
+                            {/* Botão Menu Mobile */}
+                            <button 
+                                className="header-mobile-menu-btn"
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+                                aria-expanded={mobileMenuOpen}
+                                aria-controls="mobile-nav"
+                            >
+                                {mobileMenuOpen ? <X className="header-mobile-menu-icon" /> : <Menu className="header-mobile-menu-icon" />}
+                            </button>
+                            
+                            {/* Avatar */}
+                            <button 
+                                onClick={() => onNavigate('profile')} 
+                                className={`header-avatar ${userProgress.avatar ? 'emoji' : 'initials'}`}
+                                aria-label="Ir para perfil"
+                            >
+                                {userProgress.avatar ? userProgress.avatar : initials}
+                            </button>
+                        </div>
                     </div>
-                    <nav className="hidden md:flex items-center gap-6">
-                        <button onClick={() => onNavigate('home')} className="text-white/80 hover:text-white font-semibold transition-colors">Trilhas</button>
-                        <button onClick={() => onNavigate('ranking')} className="text-white/80 hover:text-white font-semibold transition-colors">Ranking</button>
-                    </nav>
-                    <div className="flex items-center gap-4 md:gap-6">
-                        <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-2 rounded-full"> <Flame /> <span className="font-bold">{userProgress.streak}</span> </div>
-                        <div className="flex items-center gap-2 bg-cyan-500/20 px-3 py-2 rounded-full"> <Gem /> <span className="font-bold">{userProgress.gems}</span> </div>
-                        <div className="flex items-center gap-2 bg-red-500/20 px-3 py-2 rounded-full"> <Heart className={`${userProgress.lives > 0 ? 'text-red-400' : 'text-gray-500'}`} /> <span className="font-bold">{userProgress.lives}</span> </div>
-                        <button onClick={() => onNavigate('profile')} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-2xl">{userProgress.avatar ? userProgress.avatar : initials}</button>
-                    </div>
-                </div>
-            </header>
+                    
+                    {/* Menu Mobile Dropdown */}
+                    {mobileMenuOpen && (
+                        <nav 
+                            id="mobile-nav"
+                            className="header-nav-mobile open" 
+                            aria-label="Menu de navegação mobile"
+                        >
+                            <button 
+                                onClick={() => {
+                                    onNavigate('home');
+                                    setMobileMenuOpen(false);
+                                }} 
+                                className="header-nav-btn"
+                                aria-label="Ir para Trilhas"
+                            >
+                                <Target className="header-nav-icon" />
+                                <span>Trilhas</span>
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    onNavigate('ranking');
+                                    setMobileMenuOpen(false);
+                                }} 
+                                className="header-nav-btn"
+                                aria-label="Ir para Ranking"
+                            >
+                                <Trophy className="header-nav-icon" />
+                                <span>Ranking</span>
+                            </button>
+                            
+                            {/* Estatísticas no menu mobile */}
+                            <div style={{ 
+                                display: 'flex', 
+                                gap: '0.5rem', 
+                                padding: '0.5rem 0',
+                                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                                marginTop: '0.5rem'
+                            }}>
+                                <div className="header-stat" aria-label={`Ofensiva: ${userProgress.streak} dias`}>
+                                    <Flame className="header-stat-icon" style={{ color: '#fb923c' }} />
+                                    <span className="header-stat-value">{userProgress.streak}</span>
+                                </div>
+                                <div className="header-stat" aria-label={`Gemas: ${userProgress.gems}`}>
+                                    <Gem className="header-stat-icon" style={{ color: '#22d3ee' }} />
+                                    <span className="header-stat-value">{userProgress.gems}</span>
+                                </div>
+                                <div className="header-stat" aria-label={`Vidas: ${userProgress.lives}`}>
+                                    <Heart 
+                                        className="header-stat-icon" 
+                                        style={{ color: userProgress.lives > 0 ? '#f87171' : '#9ca3af' }} 
+                                    />
+                                    <span className="header-stat-value">{userProgress.lives}</span>
+                                </div>
+                            </div>
+                        </nav>
+                    )}
+                </header>
             );
         });
 

@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta tags para SEO -->
+    <meta name="description" content="Entre ou cadastre-se no DBQuest para começar sua jornada de aprendizado em banco de dados.">
+    <meta name="keywords" content="login, cadastro, DBQuest, banco de dados">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Login - DBQuest">
+    <meta property="og:description" content="Entre ou cadastre-se no DBQuest">
+    <meta property="og:type" content="website">
+    
     <title>Login - DBQuest</title>
     
     <!-- Tailwind CSS -->
@@ -20,8 +30,13 @@
     <link rel="stylesheet" href="../styles/pages/auth.css">
 </head>
 <body>
-    <!-- Container principal -->
-    <div id="root"></div>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-to-content">Pular para o conteúdo principal</a>
+    
+    <!-- Container principal com role e aria-label -->
+    <main id="main-content" role="main" aria-label="Autenticação">
+        <div id="root"></div>
+    </main>
 
     <!-- Firebase Config -->
     <script type="module">
@@ -85,5 +100,25 @@
     
     <!-- Componente React -->
     <script type="text/babel" src="../components/AuthComponent.jsx"></script>
+    
+    <style>
+        /* Estilos adicionais para acessibilidade */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #6366f1;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            z-index: 100;
+            font-weight: 600;
+        }
+        
+        .skip-to-content:focus {
+            top: 0;
+        }
+    </style>
 </body>
 </html>
