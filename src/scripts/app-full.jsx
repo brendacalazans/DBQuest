@@ -1248,68 +1248,85 @@
             });
 
             // Observador de Dados do Usuário
-            let offUserProgress = () => {};
-            if (userId) {
-                const userRef = ref(db, `users/${userId}`);
-                offUserProgress = onValue(userRef, async (snapshot) => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        
-                        // --- Verificação de Ofensiva e Vidas (Restaurado) ---
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const todayTimestamp = today.getTime();
-                        
-                        const lastResetDate = data.lastLifeResetDate ? new Date(data.lastLifeResetDate) : null;
-                        let lives = data.gamification.lives;
-                        let cooldown = data.cooldownUntil ? new Date(data.cooldownUntil) : null;
-                        
-                        const updates = {};
-                        let needsUpdate = false;
+            // Observador de Dados do Usuário (CORRIGIDO)
+        let offUserProgress = () => {};
+        if (userId) {
+            const userRef = ref(db, `users/${userId}`);
+            offUserProgress = onValue(userRef, async (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    
+                    // --- Verificação de Ofensiva e Vidas ---
+                    const now = new Date();
+                    const today = new Date(now);
+                    today.setHours(0, 0, 0, 0);
+                    const todayTimestamp = today.getTime();
+                    
+                    // Pega a data do último reset do banco (ou 0 se não existir)
+                    const lastResetDateNum = data.gamification.lastLifeResetDate || 0;
+                    // Converte para objeto Date para comparar dias
+                    const lastResetDate = new Date(lastResetDateNum);
+                    lastResetDate.setHours(0,0,0,0);
 
-                        // Check for daily life reset
-                        if (!lastResetDate || lastResetDate.getTime() < todayTimestamp) {
-                            if (lives < 5) {
-                                updates['gamification/lives'] = 5;
-                                updates['cooldownUntil'] = null;
-                                updates['lastLifeResetDate'] = todayTimestamp;
-                                lives = 5;
-                                cooldown = null;
-                                needsUpdate = true;
-                            }
-                        }
+                    let lives = data.gamification.lives;
+                    let cooldown = data.cooldownUntil ? new Date(data.cooldownUntil) : null;
+                    
+                    const updates = {};
+                    let needsUpdate = false;
 
-                        // Check if cooldown has ended
-                        if (cooldown && cooldown.getTime() <= Date.now()) {
+                    // LÓGICA CORRIGIDA DE RESET DIÁRIO
+                    // Só reseta se a data salva for ANTERIOR a hoje (dia diferente)
+                    if (lastResetDate.getTime() < todayTimestamp) {
+                        if (lives < 5) {
                             updates['gamification/lives'] = 5;
                             updates['cooldownUntil'] = null;
-                            updates['lastLifeResetDate'] = todayTimestamp;
+                            updates['gamification/lastLifeResetDate'] = todayTimestamp; // Atualiza a data para hoje
                             lives = 5;
+                            cooldown = null;
+                            needsUpdate = true;
+                            console.log("Reset diário de vidas aplicado.");
+                        } else {
+                            // Se já tem 5 vidas, só atualiza a data para não checar de novo hoje
+                            updates['gamification/lastLifeResetDate'] = todayTimestamp;
                             needsUpdate = true;
                         }
+                    }
 
-                        // Check for streak reset
-                       const lastCompleted = data.gamification?.lastCompletedLessonDate 
-    ? new Date(data.gamification.lastCompletedLessonDate) 
-    : null;
+                    // Check if cooldown has ended
+                    if (cooldown && cooldown.getTime() <= Date.now()) {
+                        updates['gamification/lives'] = 5;
+                        updates['cooldownUntil'] = null;
+                        updates['gamification/lastLifeResetDate'] = todayTimestamp;
+                        lives = 5;
+                        needsUpdate = true;
+                    }
 
-if (lastCompleted) {
-    lastCompleted.setHours(0, 0, 0, 0);  // ✅ CORREÇÃO: Zera as horas para comparar apenas o dia
-    
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    yesterday.setHours(0, 0, 0, 0);  // ✅ CORREÇÃO: Zera as horas do yesterday também
-    
-    // Se a última lição completada foi ANTES de ontem, zera a ofensiva
-    if (lastCompleted.getTime() < yesterday.getTime()) {
-        updates['gamification/streak'] = 0;
-        needsUpdate = true;
-        console.log("Streak resetado - usuário não completou lição ontem");
-    }
-}
+                    // Check for streak reset
+                    const lastCompleted = data.gamification?.lastCompletedLessonDate 
+                        ? new Date(data.gamification.lastCompletedLessonDate) 
+                        : null;
 
+                    if (lastCompleted) {
+                        lastCompleted.setHours(0, 0, 0, 0);
                         
-                        // Atualiza o estado local com os dados do DB (e possíveis atualizações)
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        yesterday.setHours(0, 0, 0, 0);
+                        
+                        if (lastCompleted.getTime() < yesterday.getTime()) {
+                            updates['gamification/streak'] = 0;
+                            needsUpdate = true;
+                            console.log("Streak resetado.");
+                        }
+                    }
+                    
+                    // Se precisar atualizar o banco (reset de dia/streak), faz o update.
+                    // O onValue vai disparar de novo com os dados certos.
+                    if (needsUpdate) {
+                         update(ref(db, `users/${userId}`), updates);
+                    } else {
+                        // Se NÃO precisa de update no banco, atualiza a tela com o que veio do banco.
+                        // Isso evita o "pula-pula" visual.
                         setUserProgress({
                             ...data.gamification,
                             username: data.name || auth.currentUser.displayName || 'Aluno',
@@ -1317,63 +1334,42 @@ if (lastCompleted) {
                             cooldownUntil: cooldown ? cooldown.toISOString() : null,
                             lives: lives
                         });
-                        
-                        // Garante que o ranking esteja atualizado
-                        const rankRef = ref(db, `leaderboard/${userId}`);
-                        const rankSnapshot = await get(rankRef); // 'get' precisa ser importado
-                        if (!rankSnapshot.exists() || rankSnapshot.val().username !== data.name || rankSnapshot.val().avatar !== data.avatar) {
-                            update(rankRef, {
-                                username: data.name,
-                                totalXP: data.gamification.totalXP,
-                                avatar: data.avatar || '👤'
-                            });
-                        }
-
-                    } else {
-                        // --- Cria novo usuário no DB (Restaurado) ---
-                        const newUser = {
-                            name: auth.currentUser.displayName || 'Novo Aluno',
-                            avatar: '👤',
-                            email: auth.currentUser.email,
-                            joinedDate: new Date().toISOString(),
-                            gamification: {
-                                level: 1,
-                                totalXP: 0,
-                                streak: 0,
-                                gems: 100,
-                                lives: 5,
-                                completedLessons: [],
-                                lastCompletedLessonDate: null,
-                                lastLifeResetDate: new Date().setHours(0,0,0,0)
-                            },
-                            cooldownUntil: null
-                        };
-                        await set(userRef, newUser);
-                        setUserProgress(newUser.gamification);
-                        
-                        // Adiciona ao leaderboard
-                        await set(ref(db, `leaderboard/${userId}`), {
-                            username: newUser.name,
-                            totalXP: 0,
-                            avatar: newUser.avatar
+                    }
+                    
+                    // Garante que o ranking esteja atualizado
+                    const rankRef = ref(db, `leaderboard/${userId}`);
+                    const rankSnapshot = await get(rankRef);
+                    if (!rankSnapshot.exists() || rankSnapshot.val().username !== data.name || rankSnapshot.val().avatar !== data.avatar) {
+                        update(rankRef, {
+                            username: data.name,
+                            totalXP: data.gamification.totalXP,
+                            avatar: data.avatar || '👤'
                         });
                     }
-                });
-            } else {
-                // Reseta o progresso se o usuário deslogar
-                setUserProgress({
-                    username: 'Convidado', avatar: '👤', level: 1, totalXP: 0,
-                    streak: 0, gems: 0, lives: 5, completedLessons: []
-                });
-            }
 
-            // Função de limpeza
-            return () => {
-                offLeaderboard();
-                offUserProgress();
-            };
-        // Adicionada a importação de 'get' que estava faltando
-        }, [userId, db, auth, get]); // Adicionado 'get'
+                } else {
+                    // ... (código de criação de novo usuário igual ao anterior)
+                    const newUser = {
+                        name: auth.currentUser.displayName || 'Novo Aluno',
+                        avatar: '👤',
+                        email: auth.currentUser.email,
+                        joinedDate: new Date().toISOString(),
+                        gamification: {
+                            level: 1, totalXP: 0, streak: 0, gems: 100, lives: 5,
+                            completedLessons: [], lastCompletedLessonDate: null,
+                            lastLifeResetDate: new Date().setHours(0,0,0,0)
+                        },
+                        cooldownUntil: null
+                    };
+                    await set(userRef, newUser);
+                    // Não setamos userProgress aqui, deixamos o onValue rodar de novo
+                    
+                    await set(ref(db, `leaderboard/${userId}`), {
+                        username: newUser.name, totalXP: 0, avatar: newUser.avatar
+                    });
+                }
+            });
+        }
 
         // --- Funções de Handler (Restauradas) ---
         const handleLogout = async () => {
