@@ -955,14 +955,17 @@
         const [name, setName] = useState('');
         const [isLoading, setIsLoading] = useState(false);
 
-        const handleLogout = async () => {
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            setIsLoading(true);
             try {
-                await signOut(auth);
-                // NÃO setamos estados aqui.
-                // Deixamos o onAuthStateChanged do HTML perceber a mudança
-                // e fazer o window.location.href = '/src/pages/auth.html'
+                await signInWithEmailAndPassword(auth, email, password);
+                // Success is handled by onAuthStateChanged in App
             } catch (error) {
-                console.error("Erro ao sair", error);
+                console.error(error);
+                setLocalToast({ message: 'Email ou senha inválidos.', type: 'error' });
+            } finally {
+                setIsLoading(false);
             }
         };
 
