@@ -2486,64 +2486,73 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (VERSÃO ROBUSTA - Tenta múltiplos modelos) ---
+        // --- Funções da API Gemini (VERSÃO FINAL DE DEBUG) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            // Pega a chave do localStorage ou usa a que você mostrou no erro como backup
-            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
-            const apiKey = savedKey || "AIzaSyBzL-4izSkl0lJlkyL3YOiE3Kg5zO_r9w0"; 
+            // 1. Prioridade: Chave salva no perfil
+            let apiKey = localStorage.getItem('dbquest_gemini_api_key');
+            
+            // 2. Fallback: Se não tiver no perfil, usa esta hardcoded (COLE SUA CHAVE NOVA AQUI)
+            if (!apiKey) {
+                apiKey = "SUA_NOVA_CHAVE_DO_GOOGLE_AI_STUDIO_AQUI"; 
+            }
 
-            if (!apiKey) throw new Error("Chave de API não encontrada.");
+            // Debug: Mostra no console (parcialmente) qual chave está sendo usada
+            console.log("Usando API Key:", apiKey ? `...${apiKey.slice(-5)}` : "Nenhuma");
 
-            // Lista de modelos para tentar em ordem de preferência
-            // Se o primeiro der 404, ele tenta o segundo, e assim por diante.
+            if (!apiKey || apiKey.includes("SUA_NOVA_CHAVE")) {
+                 throw new Error("Chave de API inválida. Configure no Perfil.");
+            }
+
+            // Lista de modelos atualizada e simplificada
             const modelsToTry = [
-                "gemini-1.5-flash-latest",
-                "gemini-1.5-flash-001",
-                "gemini-1.5-flash",
-                "gemini-pro" // O "fusca" indestrutível: antigo mas sempre funciona
+                "gemini-1.5-flash", // Versão estável atual
+                "gemini-1.5-flash-latest", 
+                "gemini-pro" // Versão legado (backup)
             ];
 
             for (const model of modelsToTry) {
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
                 
                 try {
-                    console.log(`Tentando modelo IA: ${model}...`);
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
 
-                    // Se o modelo não for encontrado (404), pula para o próximo da lista
+                    // Se funcionar, retorna direto
+                    if (response.ok) {
+                        const result = await response.json();
+                        const candidate = result.candidates?.[0];
+                        if (candidate && candidate.content?.parts?.[0]?.text) {
+                            return candidate.content.parts[0].text;
+                        }
+                    } 
+                    
+                    // Se der erro 404 (Modelo não encontrado/Ativado), loga e tenta o próximo
                     if (response.status === 404) {
-                        console.warn(`Modelo ${model} retornou 404. Tentando o próximo...`);
+                        console.warn(`Modelo ${model} não encontrado (404) ou API não ativada para esta chave.`);
                         continue; 
                     }
 
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
+                    // Se der erro 400 (Chave Inválida), para tudo.
+                    if (response.status === 400) {
+                         const errorData = await response.json();
+                         console.error("Erro fatal de chave:", errorData);
+                         throw new Error("Sua Chave de API é inválida ou expirou. Verifique no Google AI Studio.");
                     }
 
-                    const result = await response.json();
-                    const candidate = result.candidates?.[0];
+                    // Outros erros
+                    throw new Error(`Erro HTTP: ${response.status}`);
 
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        return candidate.content.parts[0].text;
-                    } else {
-                        // Se a resposta veio vazia mas sem erro HTTP, tenta o próximo modelo
-                        console.warn(`Modelo ${model} retornou vazio.`);
-                        continue;
-                    }
                 } catch (error) {
-                    console.error(`Falha com ${model}:`, error);
-                    // Se for o último modelo da lista e falhou, aí sim lançamos o erro final
+                    console.error(`Falha ao tentar ${model}:`, error);
+                    // Se for o último modelo e falhou, repassa o erro
                     if (model === modelsToTry[modelsToTry.length - 1]) throw error;
                 }
             }
-            throw new Error("Nenhum modelo de IA respondeu com sucesso.");
+            throw new Error("Não foi possível conectar com a IA. Verifique sua chave.");
         }, []);
-        
         const getAiExplanation = useCallback(async (question, incorrectAnswer) => {
             setIsAiExplanationLoading(true);
             setAiExplanation('');
