@@ -2486,32 +2486,26 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (VERSÃO FINAL DE DEBUG) ---
+        // --- Funções da API Gemini (COM SUA CHAVE NOVA) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
             
-            const myHardcodedKey = "AIzaSyCNuaHBNpDatWP4X-73EeO29KgScytufNc"; 
-           
-
-
-            // Lógica: Tenta pegar do navegador. Se não tiver, usa a que você colou acima.
-            let apiKey = localStorage.getItem('dbquest_gemini_api_key');
+            // 1. Tenta pegar do perfil (localStorage)
+            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
             
-            if (!apiKey || apiKey.trim() === "") {
-                apiKey = myHardcodedKey;
-            }
+            // 2. Se não tiver no perfil, usa a chave que você mandou agora:
+            const apiKey = savedKey || "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc";
 
-            // DEBUG: Abre o console (F12) para ver se a chave está sendo lida
-            if (apiKey && !apiKey.includes("COLE_SUA_CHAVE")) {
-                console.log(`✅ Usando chave que termina em: ...${apiKey.slice(-4)}`);
-            } else {
-                console.error("❌ NENHUMA CHAVE VÁLIDA ENCONTRADA!");
-                throw new Error("Configure a chave da API no código ou no perfil.");
-            }
+            if (!apiKey) throw new Error("Chave de API não configurada.");
 
-            // Lista de modelos para tentar (Flash é o mais rápido e gratuito)
-            const modelsToTry = ["gemini-1.5-flash", "gemini-pro"];
+            // Lista de modelos para tentar (do mais novo para o mais compatível)
+            const modelsToTry = [
+                "gemini-1.5-flash",
+                "gemini-1.5-flash-latest",
+                "gemini-pro"
+            ];
 
             for (const model of modelsToTry) {
+                // Monta a URL com o modelo atual e a SUA chave
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
                 
                 try {
@@ -2521,21 +2515,15 @@
                         body: JSON.stringify(payload)
                     });
 
-                    // Se der erro 404 (Modelo não achado), tenta o próximo
+                    // Se der 404 (Modelo não achado), tenta o próximo da lista
                     if (response.status === 404) {
-                        console.warn(`Modelo ${model} não encontrado. Tentando próximo...`);
+                        console.warn(`Modelo ${model} não encontrado. Tentando o próximo...`);
                         continue; 
                     }
 
-                    // Se der erro de chave (400)
-                    if (response.status === 400) {
-                         const err = await response.json();
-                         console.error("ERRO DE CHAVE:", err);
-                         throw new Error("Chave de API Inválida ou Expirada.");
-                    }
-
                     if (!response.ok) {
-                        throw new Error(`Erro HTTP: ${response.status}`);
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
 
                     const result = await response.json();
@@ -2545,7 +2533,8 @@
                         return candidate.content.parts[0].text;
                     }
                 } catch (error) {
-                    console.error(`Falha no modelo ${model}:`, error);
+                    console.error(`Falha com ${model}:`, error);
+                    // Se foi o último modelo e falhou, desiste
                     if (model === modelsToTry[modelsToTry.length - 1]) throw error;
                 }
             }
