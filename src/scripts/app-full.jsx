@@ -2493,7 +2493,7 @@
             
             // 2. Fallback: Se não tiver no perfil, usa esta hardcoded (COLE SUA CHAVE NOVA AQUI)
             if (!apiKey) {
-                apiKey = "SUA_NOVA_CHAVE_DO_GOOGLE_AI_STUDIO_AQUI"; 
+                apiKey = "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc"; 
             }
 
             // Debug: Mostra no console (parcialmente) qual chave está sendo usada
