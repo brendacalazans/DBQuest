@@ -2486,9 +2486,17 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini ---
-        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            const apiKey = "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg";
+       // --- Funções da API Gemini (CORRIGIDO) ---
+        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
+            // 1. Tenta pegar a chave salva no navegador (perfil)
+            // 2. Se não tiver, usa a chave hardcoded (fallback)
+            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
+            const apiKey = savedKey || "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg"; // CUIDADO: Em produção, não deixe chaves hardcoded aqui.
+
+            if (!apiKey) {
+                throw new Error("Chave da API não configurada. Vá em Perfil para configurar.");
+            }
+
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
@@ -2500,7 +2508,8 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(`Erro na API (${response.status}): ${errorData.error?.message || 'Erro desconhecido'}`);
                     }
 
                     const result = await response.json();
@@ -2509,12 +2518,12 @@
                     if (candidate && candidate.content?.parts?.[0]?.text) {
                         return candidate.content.parts[0].text;
                     } else {
-                        throw new Error("Resposta da API inválida.");
+                        throw new Error("Resposta da API inválida ou vazia.");
                     }
                 } catch (error) {
                     console.error(`Tentativa ${i + 1} falhou:`, error);
                     if (i === retries - 1) throw error; // Lança o erro na última tentativa
-                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i))); // Backoff exponencial
                 }
             }
         }, []);
