@@ -2486,35 +2486,42 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (CORRIGIDA E LIMPA) ---
+        // --- Funções da API Gemini (VERSÃO ROBUSTA - Tenta múltiplos modelos) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            // 1. Tenta pegar a chave salva no navegador
-            const apiKey = localStorage.getItem('dbquest_gemini_api_key');
+            // Pega a chave do localStorage ou usa a que você mostrou no erro como backup
+            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
+            const apiKey = savedKey || "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc"; 
 
-            // 2. Se não tiver chave salva, lança erro avisando o usuário
-            if (!apiKey) {
-                throw new Error("⚠️ Chave de IA não configurada. Vá no seu Perfil > Editar e cole sua chave do Google AI.");
-            }
-            
-            // 3. Usa o modelo padrão 'gemini-1.5-flash' (mais estável que o latest)
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            if (!apiKey) throw new Error("Chave de API não encontrada.");
 
-            for (let i = 0; i < retries; i++) {
+            // Lista de modelos para tentar em ordem de preferência
+            // Se o primeiro der 404, ele tenta o segundo, e assim por diante.
+            const modelsToTry = [
+                "gemini-1.5-flash-latest",
+                "gemini-1.5-flash-001",
+                "gemini-1.5-flash",
+                "gemini-pro" // O "fusca" indestrutível: antigo mas sempre funciona
+            ];
+
+            for (const model of modelsToTry) {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                
                 try {
+                    console.log(`Tentando modelo IA: ${model}...`);
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
 
+                    // Se o modelo não for encontrado (404), pula para o próximo da lista
+                    if (response.status === 404) {
+                        console.warn(`Modelo ${model} retornou 404. Tentando o próximo...`);
+                        continue; 
+                    }
+
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
-                        
-                        // Se o erro for de chave inválida/expirada (400 com detalhes específicos)
-                        if (response.status === 400 && JSON.stringify(errorData).includes("API key")) {
-                             throw new Error("Sua chave de API expirou ou é inválida. Gere uma nova.");
-                        }
-
                         throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
 
@@ -2524,17 +2531,17 @@
                     if (candidate && candidate.content?.parts?.[0]?.text) {
                         return candidate.content.parts[0].text;
                     } else {
-                        throw new Error("Resposta da IA vazia.");
+                        // Se a resposta veio vazia mas sem erro HTTP, tenta o próximo modelo
+                        console.warn(`Modelo ${model} retornou vazio.`);
+                        continue;
                     }
                 } catch (error) {
-                    console.error(`Tentativa ${i + 1} falhou:`, error);
-                    
-                    // Se for a última tentativa, desiste
-                    if (i === retries - 1) throw error; 
-                    
-                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                    console.error(`Falha com ${model}:`, error);
+                    // Se for o último modelo da lista e falhou, aí sim lançamos o erro final
+                    if (model === modelsToTry[modelsToTry.length - 1]) throw error;
                 }
             }
+            throw new Error("Nenhum modelo de IA respondeu com sucesso.");
         }, []);
         
         const getAiExplanation = useCallback(async (question, incorrectAnswer) => {
