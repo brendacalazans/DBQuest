@@ -2486,9 +2486,15 @@
             }
         }, [userId, db]);
 
+        // --- Funções da API Gemini (CORRIGIDA) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            const apiKey = "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            // Usa a chave salva no navegador OU a hardcoded como fallback (para teste)
+            // Recomendo usar a do localStorage para segurança, mas deixei a sua hardcoded como backup se não tiver nada salvo.
+            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
+            const apiKey = savedKey || "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg"; 
+            
+            // CORREÇÃO AQUI: Mudamos para o modelo estável 'gemini-1.5-flash'
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
                 try {
@@ -2499,7 +2505,9 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorData = await response.json().catch(() => ({}));
+                        // Lança um erro mais detalhado para ajudar no debug
+                        throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
 
                     const result = await response.json();
@@ -2508,7 +2516,7 @@
                     if (candidate && candidate.content?.parts?.[0]?.text) {
                         return candidate.content.parts[0].text;
                     } else {
-                        throw new Error("Resposta da API inválida.");
+                        throw new Error("Resposta da API vazia ou inválida.");
                     }
                 } catch (error) {
                     console.error(`Tentativa ${i + 1} falhou:`, error);
