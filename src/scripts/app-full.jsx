@@ -2572,7 +2572,7 @@
             };
 
             try {
-                const responseText = await callGeminiAPI(payload);                const responseText = await callGeminiAPI(payload);
+                const responseText = await callGeminiAPI(payload);               
                 const challengeData = JSON.parse(responseText);
                 setChallenge(challengeData);
             } catch (error) {
