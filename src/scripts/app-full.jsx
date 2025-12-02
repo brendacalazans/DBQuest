@@ -2486,13 +2486,13 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (CORRIGIDA 404) ---
+        // --- Funções da API Gemini (CORRIGIDA E ROBUSTA) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            // Usa a chave salva no navegador OU a hardcoded como fallback
+            // Tenta pegar a chave salva, ou usa a sua fixa como backup
             const savedKey = localStorage.getItem('dbquest_gemini_api_key');
-            const apiKey = savedKey || "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg"; 
+            const apiKey = savedKey || "AIzaSyBff5j5Hp-clNMKTIrvQkebF4UEbFCfJ5c"; 
             
-            // MUDANÇA: Usando 'gemini-1.5-flash-latest' para garantir que encontre a versão
+            // MUDANÇA: Usamos o endpoint 'gemini-1.5-flash-latest' que é mais seguro contra erros 404
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
@@ -2505,7 +2505,7 @@
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
-                        // Lança erro detalhado
+                        // Se der erro 404 ou 400, lança erro para tentar o catch
                         throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
 
@@ -2519,7 +2519,28 @@
                     }
                 } catch (error) {
                     console.error(`Tentativa ${i + 1} falhou:`, error);
-                    if (i === retries - 1) throw error; // Lança o erro na última tentativa
+                    
+                    // Se for a última tentativa, vamos tentar um modelo de BACKUP (gemini-pro) que raramente falha
+                    if (i === retries - 1) {
+                         console.warn("Tentando modelo de backup (gemini-pro)...");
+                         try {
+                            const backupUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+                            const backupResponse = await fetch(backupUrl, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
+                            });
+                            const backupResult = await backupResponse.json();
+                            const backupCandidate = backupResult.candidates?.[0];
+                            if (backupCandidate && backupCandidate.content?.parts?.[0]?.text) {
+                                return backupCandidate.content.parts[0].text;
+                            }
+                         } catch (backupError) {
+                             console.error("Backup também falhou", backupError);
+                         }
+                         throw error; // Se nem o backup funcionar, lança o erro original
+                    }
+                    
                     await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
                 }
             }
