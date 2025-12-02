@@ -9,7 +9,6 @@
     
     const { useState, useEffect, useCallback, memo, createContext, useContext } = React;
     
-    // --- Ícones como Componentes React (Memoizados) ---
     const Trophy = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>);
     const Star = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>);
     const Sparkles = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.9 1.9-1.9-1.9-1.9 1.9-1.9-1.9L2.5 5l1.9 1.9-1.9 1.9 1.9 1.9-1.9 1.9 1.9 1.9 1.9-1.9 1.9 1.9 1.9-1.9 1.9 1.9 1.9-1.9-1.9-1.9 1.9-1.9-1.9-1.9 1.9-1.9Z"/><path d="M22 12.5 20.1 14.4 22 16.3 20.1 18.2 22 20.1 18.2 20.1 16.3 22 14.4 20.1 12.5 22 12.5 18.2 10.6 20.1 8.7 18.2 10.6 16.3 8.7 14.4 10.6 12.5 8.7 10.6 10.6 8.7 12.5 6.8 14.4 8.7 16.3 10.6 18.2 12.5Z"/></svg>);
@@ -44,7 +43,6 @@
         practice: { xp: 75 }
     };
 
-    // --- 2. DEFINIÇÃO DAS TRILHAS (MOVIDA PARA CÁ) ---
     const trailsData = [
                 {
             id: 'trail1',
@@ -53,7 +51,6 @@
             title: 'Fundamentos de Banco de Dados',
             description: 'Comece do zero e construa uma base sólida.',
             lessons: [
-                // Unidade 0: Vídeo
                 { 
                     id: 't1-l0', 
                     title: 'Vídeo: Introdução aos Fundamentos', 
@@ -62,7 +59,6 @@
                     duration: '5 min', 
                     xp: REWARD_CONFIG.lesson.xp 
                 },
-                // Unidade 1: Artigo SGBD
                 { 
                     id: 't1-l1-article', 
                     title: 'Resumo: O Coração do Sistema (SGBD)', 
@@ -71,7 +67,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: 'O banco de dados em si é o "fichário" ou a "biblioteca" onde os dados são fisicamente armazenados. Mas quem opera essa biblioteca? Esse é o trabalho do SGBD (Sistema de Gerenciamento de Banco de Dados).\n\nO SGBD é o software, o "cérebro" ou o "bibliotecário" que recebe os seus pedidos, guarda as informações com segurança e as busca quando você precisa. Ele atua como uma interface entre o usuário e o banco de dados.\n\nSuas principais funções incluem:\n• Armazenamento e Recuperação de Dados\n• Segurança (Controla quem pode acessar o quê)\n• Integridade dos Dados (Garante que os dados sejam válidos, ex: idade não pode ser negativa)\n• Concorrência (Permite múltiplos acessos ao mesmo tempo sem corromper dados)\n• Recuperação de Falhas (Restaura o banco após uma queda de energia, por exemplo)\n\nExemplos de SGBDs Populares: MySQL, PostgreSQL, Oracle Database, SQL Server e SQLite.' // Baseado no Doc 
                 },
-                // Unidade 1: Teste SGBD
                 { 
                     id: 't1-l1-theory', 
                     title: 'Teste: O Papel do SGBD', 
@@ -85,7 +80,6 @@
                         { question: 'Quais dos seguintes são exemplos de SGBDs populares?', options: ['Microsoft Excel e Google Sheets', 'MySQL e Microsoft SQL Server', 'Adobe Photoshop e GIMP', 'Windows Server e Linux Ubuntu'], correct: 1, explanation: 'MySQL e SQL Server são SGBDs amplamente utilizados, enquanto os outros são planilhas, editores de imagem ou sistemas operacionais.' }
                     ] // Perguntas baseadas na Unidade 1 do Doc 
                 },
-                // Unidade 2: Artigo SQL
                 { 
                     id: 't1-l2-article', 
                     title: 'Resumo: A Língua Universal (SQL)', 
@@ -94,7 +88,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: 'Para conversar com o "bibliotecário" (o SGBD), você precisa de uma linguagem que ele entenda. Essa linguagem é o SQL (Structured Query Language).\n\nO SQL é dividido em subconjuntos:\n• DDL (Data Definition Language): Usada para definir a estrutura (ex: CREATE TABLE, ALTER TABLE, DROP TABLE).\n• DML (Data Manipulation Language): Usada para manipular os dados dentro das tabelas (ex: INSERT, UPDATE, DELETE).\n• DCL (Data Control Language): Usada para gerenciar permissões (ex: GRANT, REVOKE).\n• TCL (Transaction Control Language): Usada para gerenciar transações (ex: COMMIT, ROLLBACK).' // Baseado no Doc 
                 },
-                // Unidade 2: Teste SQL (Perguntas novas, pois o doc repetiu)
                 { 
                     id: 't1-l2-theory', 
                     title: 'Teste: Comandos SQL', 
@@ -107,7 +100,6 @@
                         { question: 'Para salvar permanentemente uma transação, qual comando TCL você usaria?', options: ['GRANT', 'ROLLBACK', 'COMMIT', 'UPDATE'], correct: 2, explanation: 'O comando COMMIT (parte do TCL) é usado para salvar as mudanças de uma transação permanentemente.' }
                     ]
                 },
-                // Unidade 3: Artigo Modelo Relacional
                 { 
                     id: 't1-l3-article', 
                     title: 'Resumo: Organização (Modelo Relacional)', 
@@ -116,7 +108,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: 'Focamos nos Bancos de Dados Relacionais, que organizam os dados em Tabelas (similares a planilhas).\n\nA estrutura de uma Tabela é dividida em:\n• Colunas (Atributos): As categorias de informação (ex: "Nome", "Email").\n• Linhas (Registros/Tuplas): O conjunto de informações sobre um único item (ex: os dados de um cliente específico).\n\nPara que as tabelas possam se relacionar, usamos chaves:\n• Chave Primária (Primary Key - PK): É o identificador único de cada linha (ex: ID_Cliente). Não pode ter valores duplicados e não pode ser nula.\n• Chave Estrangeira (Foreign Key - FK): É a "cola" que conecta as tabelas. É uma coluna em uma tabela que faz referência à Chave Primária de outra tabela (ex: a coluna ID_Cliente na tabela Pedidos).' // Baseado no Doc 
                 },
-                // Unidade 3: Teste Modelo Relacional
                 { 
                     id: 't1-l3-theory', 
                     title: 'Teste: Chaves e Relações', 
@@ -129,7 +120,6 @@
                         { question: 'O que acontece se você tentar inserir um ID_Cliente em Pedidos que não existe na tabela Clientes?', options: ['Cria um novo cliente automaticamente.', 'A inserção falha (violação de integridade referencial).', 'O campo ID_Cliente fica nulo.', 'O SGBD permite, mas marca como "inválido".'], correct: 1, explanation: 'Isso é uma violação da integridade referencial. O SGBD rejeita a inserção para manter os dados consistentes.' }
                     ] // Perguntas baseadas na Unidade 3 do Doc 
                 },
-                // Unidade 4: Artigo SELECT
                 { 
                     id: 't1-l4-article', 
                     title: 'Resumo: Seu Primeiro Comando (SELECT)', 
@@ -138,7 +128,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: 'O comando fundamental para recuperar dados é o SELECT.\n\nPara ver todo o conteúdo (todas as colunas) de uma tabela, você usa o asterisco (*):\n`SELECT * FROM clientes;`\n\nSe você não precisa de tudo, pode especificar as colunas, o que é uma boa prática para otimizar o desempenho:\n`SELECT Nome, Email FROM clientes;`\n\nEste comando diz ao SGBD: "Mostre-me apenas as colunas Nome e Email a partir da tabela clientes".' // Baseado no Doc 
                 },
-                // Unidade 5: Artigo Casos de Uso
                 { 
                     id: 't1-l5-article', 
                     title: 'Resumo: Casos de Uso Reais', 
@@ -147,7 +136,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: 'Bancos de dados são a espinha dorsal da infraestrutura digital moderna.\n\nEm um E-commerce (como a Amazon), o SGBD gerencia:\n• Catálogo de Produtos (preços, estoque, avaliações)\n• Informações de Clientes (histórico de compras, endereços)\n• Pedidos (status, pagamento)\n• Logística (rastreamento, armazéns)\n\nEm um Sistema Bancário, o SGBD garante:\n• Transações Financeiras (depósitos, saques, saldos corretos)\n• Dados de Clientes (proteção de informações sensíveis)\n• Auditoria (registro detalhado de todas as operações)\n\nO SQL é a ferramenta que permite que analistas e desenvolvedores interajam com esses sistemas, seja para analisar vendas, inserir novos usuários em um app, ou atualizar o status de um pedido.' // Baseado no Doc 
                 },
-                // Unidade 6: Artigo Mais SQL
                 { 
                     id: 't1-l6-article', 
                     title: 'Resumo: Comandos Essenciais (DML)', 
@@ -156,7 +144,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: 'Além de consultar, você precisa manipular os dados:\n\n• WHERE: Filtra os registros. É como pedir livros de um autor específico.\n`SELECT * FROM clientes WHERE Cidade = \'São Paulo\';`\n\n• ORDER BY: Ordena os resultados.\n`SELECT Nome, Cidade FROM clientes ORDER BY Nome ASC;` (ordem alfabética)\n\n• LIMIT: Restringe o número de linhas retornadas.\n`SELECT Nome, Preco FROM produtos ORDER BY Preco DESC LIMIT 3;` (Top 3 mais caros)\n\n• INSERT INTO: Adiciona novos registros (linhas).\n`INSERT INTO clientes (Nome, Email) VALUES (\'Daniel\', \'daniel.p@email.com\');`\n\n• UPDATE: Modifica registros existentes. (CUIDADO: Use WHERE!)\n`UPDATE clientes SET Email = \'ana.novo@email.com\' WHERE ID_Cliente = 1;`\n\n• DELETE FROM: Remove registros. (CUIDADO MÁXIMO: Use WHERE!)\n`DELETE FROM clientes WHERE ID_Cliente = 3;`' // Baseado no Doc 
                 },
-                // Unidade 4, 5, 6: Teste
                 { 
                     id: 't1-l6-theory', 
                     title: 'Teste: DQL e DML', 
@@ -256,7 +243,6 @@
             title: 'Modelagem e Normalização',
             description: 'Aprenda a arquitetar bancos de dados eficientes.',
             lessons: [
-                // Unidade 0: Introdução
                 { 
                     id: 't2-l0-article', 
                     title: 'Resumo: O que é Modelagem de Dados?', 
@@ -286,7 +272,6 @@
                     ]
                 },
 
-                // Unidade 1: Blocos de Construção
                 { 
                     id: 't2-l1-article', 
                     title: 'Resumo: Blocos de Construção', 
@@ -309,7 +294,6 @@
                     ]
                 },
 
-                // Unidade 2: Chaves
                 { 
                     id: 't2-l2-article', 
                     title: 'Resumo: As Chaves do Reino (PK e FK)', 
@@ -333,7 +317,6 @@
                     ]
                 },
 
-                // Unidade 3: Cardinalidade
                 { 
                     id: 't2-l3-article', 
                     title: 'Resumo: Regras de Trânsito (Cardinalidade)', 
@@ -356,7 +339,6 @@
                     ]
                 },
 
-                // Unidade 4: Normalização
                 { 
                     id: 't2-l4-article', 
                     title: 'Resumo: A Arte de Organizar (Normalização)', 
@@ -381,7 +363,6 @@
                     ]
                 },
 
-                // Unidade 5: Exercícios Práticos
                 { 
                     id: 't2-p1', 
                     title: 'Prática: Testando Chave Primária (PK)', 
@@ -460,7 +441,6 @@
                     queryParts: ['UPDATE', 'Clientes_Nao_3FN', 'SET', 'estado', '=', "'SP-BR'", 'WHERE', 'nome_cidade', '=', "'São Paulo'", ';']
                 },
                 
-                // Unidade 7: Resumo Final
                 { 
                     id: 't2-l5-review', 
                     title: 'Revisão: A Planta Baixa Completa', 
@@ -480,7 +460,6 @@
             title: 'SQL na Prática',
             description: 'Domine a linguagem SQL com desafios do mundo real.',
             lessons: [
-                // --- UNIDADE 0 ---
                 { 
                     id: 't3-l0-video', 
                     title: 'Vídeo: Introdução ao SQL na Prática', 
@@ -500,7 +479,6 @@
                         { question: 'Qual a diferença entre DQL e DML?', options: ['DQL define a estrutura (CREATE TABLE) e DML manipula (INSERT).', 'DQL recupera dados (SELECT) e DML modifica dados (INSERT, UPDATE, DELETE).', 'DQL é para consultas rápidas (SELECT) e DML é para consultas lentas (JOIN).', 'DQL é para administradores (GRANT) e DML é para usuários (SELECT).'], correct: 1, explanation: "DQL (Data Query Language) foca em recuperar dados com SELECT, enquanto DML (Data Manipulation Language) modifica dados com INSERT, UPDATE, e DELETE." }
                     ]
                 },
-                // --- UNIDADE 1 ---
                 { 
                     id: 't3-l1-article', 
                     title: 'Resumo: Consultando Dados (DQL)', 
@@ -525,7 +503,6 @@
                         { question: 'Qual é a diferença entre WHERE e HAVING?', options: ['WHERE filtra colunas e HAVING filtra linhas.', 'WHERE é usado para números e HAVING é usado para texto.', 'WHERE e HAVING são idênticos e podem ser trocados.', 'WHERE filtra linhas antes do agrupamento (GROUP BY), e HAVING filtra os grupos depois do agrupamento.'], correct: 3, explanation: 'WHERE atua em linhas individuais antes do GROUP BY; HAVING atua sobre os grupos resultantes das funções de agregação.' }
                     ]
                 },
-                // --- UNIDADE 2 ---
                 { 
                     id: 't3-l2-article', 
                     title: 'Resumo: Conectando Dados (JOINs)', 
@@ -548,7 +525,6 @@
                         { question: "O que é um 'JOIN em Cadeia' (encadeamento de joins)?", options: ['Um JOIN que se auto-referencia na mesma tabela.', 'O uso de múltiplos JOINs em sequência para conectar três ou mais tabelas (ex: Clientes -> Pedidos -> Itens_Pedido -> Produtos).', 'Um JOIN que usa a cláusula WHERE para filtrar.', 'Um nome antigo para o FULL JOIN.'], correct: 1, explanation: "É a prática de usar múltiplos JOINs em sequência para conectar uma cadeia de tabelas relacionadas." }
                     ]
                 },
-                // --- UNIDADE 3 ---
                 { 
                     id: 't3-l3-article', 
                     title: 'Resumo: Manipulando Dados (DML)', 
@@ -573,7 +549,6 @@
                         { question: 'Qual é a sequência correta para excluir um Cliente (id 1) que possui Pedidos, que por sua vez possui Itens_Pedido?', options: ['1. Deletar de Clientes; 2. Deletar de Pedidos; 3. Deletar de Itens_Pedido.', '1. Deletar de Clientes; 2. Deletar de Itens_Pedido. (Pedidos é ignorado).', '1. Deletar de Itens_Pedido (filho); 2. Deletar de Pedidos (pai); 3. Deletar de Clientes (avô).', 'O SGBD não permite essa exclusão.'], correct: 2, explanation: 'A exclusão deve seguir a ordem da dependência, do "neto" (Itens_Pedido) para o "avô" (Clientes).' }
                     ]
                 },
-                // --- EXERCÍCIOS PRÁTICOS ---
                 { 
                     id: 't3-p1', 
                     title: 'Prática: DQL (WHERE com AND e OR)', 
@@ -673,7 +648,6 @@
                     correctQuery: "DELETE FROM Clientes WHERE id_cliente = 1;",
                     queryParts: ['DELETE FROM', 'Clientes', 'WHERE', 'id_cliente', '=', '1', ';']
                 },
-                // --- UNIDADE 4 (REVISÃO) ---
                 { 
                     id: 't3-l4-review', 
                     title: 'Revisão: DQL, JOINs e DML', 
@@ -693,7 +667,6 @@
             title: 'Projetos Avançados',
             description: 'Aplique o conhecimento em um projeto completo.',
             lessons: [
-                // --- UNIDADE 0: INTRODUÇÃO ---
                 { 
                     id: 't4-l0-video', 
                     title: 'Vídeo: Introdução a Projetos Avançados', 
@@ -710,7 +683,6 @@
                     xp: REWARD_CONFIG.article.xp,
                     content: "Ao nível de projetos avançados, o foco não é apenas fazer a consulta funcionar, mas fazê-la de forma eficiente, organizada e segura, preparando a estrutura para o crescimento do negócio. Isso significa ir além dos comandos básicos de SELECT, INSERT, UPDATE e DELETE e explorar ferramentas que otimizam a lógica, a legibilidade e a performance das suas operações com dados."
                 },
-                // --- UNIDADE 1: CTEs E SUBCONSULTAS ---
                 { 
                     id: 't4-l1-article', 
                     title: 'Resumo: Organizando com CTEs e Subconsultas', 
@@ -732,7 +704,6 @@
                         { question: 'Qual é uma vantagem de usar CTEs em vez de Subconsultas complexas?', options: ['CTEs são a única maneira de filtrar dados usando WHERE.', 'Legibilidade (dividem a lógica em blocos), reutilização (podem ser referenciadas várias vezes) e capacidade de recursão.', 'CTEs sempre rodam mais devagar, mas usam menos memória.', 'Subconsultas não podem ser usadas na cláusula FROM, apenas CTEs.'], correct: 1, explanation: 'As principais vantagens das CTEs são a legibilidade, a capacidade de reutilizar o bloco lógico várias vezes e a capacidade de realizar consultas recursivas.' }
                     ]
                 },
-                // --- UNIDADE 2: FUNÇÕES DE JANELA ---
                 { 
                     id: 't4-l2-article', 
                     title: 'Resumo: Análise com Funções de Janela', 
@@ -754,7 +725,6 @@
                         { question: 'Qual função de janela é usada para atribuir um ranking (ex: 1°, 2º, 3º) aos produtos dentro de uma categoria?', options: ['SUM() OVER (...)', 'NTILE() OVER (...)', 'RANK() OVER (PARTITION BY ... ORDER BY ...)', 'LEAD() OVER (...)'], correct: 2, explanation: "RANK() OVER (PARTITION BY ... ORDER BY ...) é a sintaxe exata para criar um ranking de linhas dentro de grupos específicos." }
                     ]
                 },
-                // --- UNIDADE 3: DDL ---
                 { 
                     id: 't4-l3-article', 
                     title: 'Resumo: Construindo a Estrutura (DDL)', 
@@ -776,7 +746,6 @@
                         { question: "Qual comando DDL é usado para 'reformar' ou modificar a estrutura de uma tabela existente (ex: adicionar uma nova coluna)?", options: ['UPDATE TABLE', 'MODIFY TABLE', 'ALTER TABLE', 'CREATE OR REPLACE TABLE'], correct: 2, explanation: "O comando ALTER TABLE é usado para modificar a estrutura de uma tabela existente, como adicionar, remover ou alterar colunas." }
                     ]
                 },
-                // --- UNIDADE 4: VIEWS ---
                 { 
                     id: 't4-l4-article', 
                     title: 'Resumo: Simplificando Acesso com Views', 
@@ -797,7 +766,6 @@
                         { question: 'Qual é a principal diferença entre uma View comum e uma View Materializada (Materialized View)?', options: ['Views comuns são mais rápidas que Views Materializadas.', 'Views comuns podem usar JOINs, enquanto Materializadas não.', 'Views Materializadas armazenam fisicamente o resultado da consulta e precisam ser atualizadas, enquanto Views comuns executam a consulta toda vez.', 'Apenas Views Materializadas podem ser usadas para segurança.'], correct: 2, explanation: "Views Materializadas armazenam o resultado fisicamente (melhorando a performance) e precisam ser atualizadas, enquanto Views comuns executam a consulta a cada acesso." }
                     ]
                 },
-                // --- UNIDADE 5: SEGURANÇA E PERFORMANCE ---
                 { 
                     id: 't4-l5-article', 
                     title: 'Resumo: Segurança e Performance', 
@@ -820,7 +788,6 @@
                         { question: 'Qual é uma boa prática de performance mencionada no texto?', options: ['Sempre usar SELECT * para garantir que todos os dados sejam carregados.', 'Evitar o uso de ALIAS (apelidos) pois eles confundem o SGBD.', 'Criar índices em todas as colunas de todas as tabelas.', 'Evitar SELECT * em produção e listar explicitamente apenas as colunas necessárias.'], correct: 3, explanation: "Listar colunas explicitamente (em vez de SELECT *) reduz a carga na rede e no banco de dados, sendo uma prática de performance crucial." }
                     ]
                 },
-                // --- UNIDADE 6: EXERCÍCIOS PRÁTICOS ---
                 { 
                     id: 't4-p1', 
                     title: 'Prática: Subconsulta na Cláusula WHERE', 
@@ -907,7 +874,6 @@
                         { question: "Você executa `START TRANSACTION;`, depois `UPDATE Contas SET saldo = 400 WHERE id_conta = 1;`. Se você executar `ROLLBACK;` em seguida, qual será o saldo da Conta 1?", options: ["400 (a mudança é temporária)", "NULL", "O saldo original (ex: 500), pois a transação foi desfeita.", "O SGBD retornará um erro."], correct: 2, explanation: "ROLLBACK desfaz todas as operações desde o START TRANSACTION, restaurando o banco de dados ao seu estado original antes da transação." }
                     ]
             	},
-            	// --- UNIDADE 7: REVISÃO ---
             	{ 
                     id: 't4-l6-review', 
                     title: 'Revisão: Projetos Avançados', 
@@ -930,7 +896,6 @@
         return name[0].toUpperCase();
     };
 
-    // --- Componente Toast (NOVO E GLOBAL) ---
     const Toast = memo(({ message, type, onDismiss }) => {
         useEffect(() => {
             const timer = setTimeout(onDismiss, 3000);
@@ -946,7 +911,6 @@
         );
     });
     
-    // --- Componente AuthScreen (ATUALIZADO PARA O DESIGN DA IMAGEM) ---
     const AuthScreen = memo(({ auth }) => {
         const [localToast, setLocalToast] = useState(null);
         const [view, setView] = useState('login'); // 'login' or 'register'
@@ -1119,7 +1083,6 @@
 
     function App() {
         
-        // --- ESTADO DA APLICAÇÃO (Restaurado) ---
         // Estados de Autenticação e Usuário
         const [userId, setUserId] = useState(null);
         const [isAuthChecked, setIsAuthChecked] = useState(false);
@@ -1163,7 +1126,6 @@
         // Estado de Notificação
         const [toast, setToast] = useState(null);
 
-        // --- EFEITOS (Restaurados) ---
         // Efeito: Observador de Autenticação
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -1254,7 +1216,6 @@
                         const data = snapshot.val();
                         const gamification = data.gamification || {};
                         
-                        // --- Verificação de Reset Diário ---
                         const now = new Date();
                         const today = new Date(now);
                         today.setHours(0, 0, 0, 0);
@@ -1379,15 +1340,13 @@
             };
         }, [userId, db]);
 
-        // --- Funções de Handler (Restauradas) ---
         const handleLogout = async () => {
             try {
                 await signOut(auth);
-                setCurrentView('home'); // Redireciona para home (que mostrará AuthScreen)
-                setToast({ message: "Sessão terminada com sucesso.", type: 'success' });
+                window.location.href = '/src/pages/auth.html';
             } catch (error) {
-                console.error("Erro ao terminar sessão:", error);
-                setToast({ message: "Erro ao terminar sessão.", type: 'error' });
+                console.error("Erro ao encerrar sessão:", error);
+                setToast({ message: "Erro ao encerrar sessão.", type: 'error' });
             }
         };
 
@@ -1403,7 +1362,6 @@
             setShowResult(false);
             setSelectedAnswer(null);
             
-            // --- LÓGICA DE ROTEAMENTO CORRIGIDA ---
             if (lesson.type === 'article') {
                 setCurrentView('article');
             } else if (lesson.type === 'practice') { // <-- ADICIONADO
@@ -1453,7 +1411,6 @@
         }, [showResult, currentLesson, currentQuestion, userProgress.lives, userId, db]);
         
        
-        // --- LÓGICA DE OFENSIVA (STREAK) E GEMAS (VERSÃO CORRIGIDA) ---
         const handleLessonCompletion = (lessonId, lessonXP) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Zera a hora para comparar apenas o dia
@@ -1466,7 +1423,6 @@
                 lastCompletedDate.setHours(0, 0, 0, 0); // Zera a hora da última data
             }
 
-            // --- LÓGICA DE STREAK (Aprimorada) ---
             let newStreak = userProgress.streak || 0;
             let streakIncreasedToday = false; // Flag para bônus de gema
             
@@ -1506,7 +1462,6 @@
                 }
             }
             
-            // --- LÓGICA DE XP E NÍVEL ---
             const newXP = (Number(userProgress.totalXP) || 0) + (Number(lessonXP) || 0);
             const newLevel = Math.floor(newXP / 100) + 1;
             const completed = [...(userProgress.completedLessons || [])];
@@ -1516,7 +1471,6 @@
                 completed.push(lessonId);
             }
 
-            // --- ✨ INÍCIO DA LÓGICA DE GEMAS ---
             let newGems = Number(userProgress.gems) || 0;
             let gemsAwarded = 0;
             const BASE_GEM_REWARD = 10;       // Recompensa base por lição nova
@@ -1537,9 +1491,7 @@
             }
 
             newGems += gemsAwarded;
-            // --- ✨ FIM DA LÓGICA DE GEMAS ---
 
-            // --- Objeto de Updates para o Firebase ---
             const updates = {
                 totalXP: newXP,
                 level: newLevel,
@@ -1586,12 +1538,9 @@
         }, [currentQuestion, currentLesson, answeredQuestions, userProgress, userId, db]);
         
         const handleArticleCompletion = useCallback(() => {
-            // Chama a nova função centralizada
             const newXP = handleLessonCompletion(currentLesson.id, currentLesson.xp);
-            
-            setCurrentView('home'); // Volta para a home
+            setCurrentView('trailDetail');
             setToast({ message: `Artigo concluído! +${currentLesson.xp} XP`, type: 'success' });
-            
         }, [currentLesson, userProgress, userId, db]);
 
         const handlePracticeCompletion = useCallback((isCorrect) => {
@@ -1662,7 +1611,6 @@
         }, []);
 
 
-        // --- Componentes Memoizados ---
         const Header = memo(({ userProgress, onNavigate }) => {
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
             const initials = getInitials(userProgress.username);
@@ -2000,7 +1948,6 @@
             );
         });
         
-        // --- COMPONENTE PARA VÍDEOS ---
     const VideoView = memo(({ currentLesson, onComplete, onBack }) => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex flex-col animate-fade-in">
@@ -2169,12 +2116,10 @@
         const CompletionView = memo(({ answeredQuestions, currentLesson, onNavigate }) => {
             const correctAnswers = answeredQuestions.filter(a => a.isCorrect).length;
             
-            // --- LÓGICA MODIFICADA ---
             // Verifica se a lição era um quiz (tem 'questions') ou uma prática (não tem)
             const isQuiz = currentLesson.questions && currentLesson.questions.length > 0;
             const totalQuestions = isQuiz ? currentLesson.questions.length : 1; // Prática conta como 1
             const isSuccess = correctAnswers > 0; // Se 'answeredQuestions' tiver UM acerto, é sucesso
-            // --- FIM DA MODIFICAÇÃO ---
             
             const xpGained = isSuccess ? currentLesson.xp : 0;
             
@@ -2206,7 +2151,7 @@
                              </button>
                             )}
                             <button
-                                onClick={() => onNavigate('home')}
+                                onClick={() => onNavigate('trailDetail')}
                                 className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-colors"
                             >
                                Continuar
@@ -2326,9 +2271,7 @@
             );
         });
 
-        // --- Componente ProfileView (NOVO) ---
         // Este componente agora gerencia seu próprio estado de toast
-        // --- Componente ProfileView (ATUALIZADO COM API KEY) ---
         const ProfileView = memo(({ userProgress, onLogout, onSaveProfile }) => {
             const [isEditing, setIsEditing] = useState(false);
             const [name, setName] = useState(userProgress.username);
@@ -2400,7 +2343,6 @@
 
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
                         {!isEditing ? (
-                            // --- MODO VISUALIZAÇÃO ---
                             <div className="flex flex-col items-center">
                                 <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center text-6xl mb-6 border-4 border-white/10">
                                     {userProgress.avatar ? userProgress.avatar : initials}
@@ -2429,7 +2371,6 @@
                                 </button>
                             </div>
                         ) : (
-                            // --- MODO EDIÇÃO ---
                             <div className="flex flex-col items-center w-full">
                                 <div className="text-6xl mb-6 p-4 bg-white/5 rounded-full">{avatar}</div>
                                 
@@ -2516,8 +2457,6 @@
                 </main>
             );
         });
-        // --- Salvar Perfil ---
-        // MUDANÇA: handleSaveProfile agora lança erros em vez de chamar setToast
         const handleSaveProfile = useCallback(async (newName, newAvatar) => {
             if (!newName || newName.trim() === "") {
                 throw new Error("O nome não pode estar vazio.");
@@ -2547,7 +2486,6 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
             const apiKey = "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -2667,7 +2605,6 @@
                 case 'article': return <ArticleView currentLesson={currentLesson} onComplete={handleArticleCompletion} onBack={() => setCurrentView('trailDetail')} />;
                 case 'lesson': return <LessonView currentLesson={currentLesson} currentQuestion={currentQuestion} userProgress={userProgress} onCheckAnswer={checkAnswer} onNextQuestion={nextQuestion} onNavigate={handleNavigate} showResult={showResult} answeredQuestions={answeredQuestions} selectedAnswer={selectedAnswer} setSelectedAnswer={setSelectedAnswer} onGetAiExplanation={getAiExplanation} aiExplanation={aiExplanation} isAiExplanationLoading={isAiExplanationLoading} />;
                 
-                // --- ADICIONE ESTE CASE ---
                 case 'practice':
                     return <PracticeView
                         currentLesson={currentLesson}
@@ -2675,7 +2612,6 @@
                         onNavigate={handleNavigate}
                         onPracticeComplete={handlePracticeCompletion}
                     />;
-                // --- FIM DA ADIÇÃO ---
                 
                 case 'completion': return <CompletionView answeredQuestions={answeredQuestions} currentLesson={currentLesson} onNavigate={handleNavigate} />;
                 case 'noLives': return <NoLivesView userProgress={userProgress} onRefillWithGems={handleRefillLives} onCooldownEnd={handleCooldownEnd} onNavigate={handleNavigate} />;
@@ -2695,7 +2631,6 @@
                 {toast && <Toast message={toast.message} type={toast.type} onDismiss={() => setToast(null)} />}
                 
                 {!userId ? (
-                    // MUDANÇA: Remoção do prop "setToast"
                     <AuthScreen auth={auth} />
                 ) : (
                     <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white min-h-screen">
@@ -2797,7 +2732,6 @@
 
     const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
-    // --- NOVA VERSÃO COMPLETA DO PRACTICEVIEW (TEXTO LIVRE) ---
     const PracticeView = memo(({ currentLesson, userProgress, onNavigate, onPracticeComplete }) => {
         const [showResult, setShowResult] = useState(false);
         const [userQueryText, setUserQueryText] = useState(""); // 🔥 novo: texto da query escrita pelo usuário

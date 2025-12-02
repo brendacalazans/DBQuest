@@ -1,11 +1,4 @@
-/**
- * Estilos Globais - DBQuest
- * 
- * Contém animações e estilos personalizados aplicados globalmente
- * Versão com melhorias de acessibilidade e responsividade
- */
-
-/* Reset e configurações base */
+/* Global styles and animations */
 * {
     box-sizing: border-box;
 }

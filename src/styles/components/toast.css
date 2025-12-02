@@ -1,36 +1,30 @@
-/**
- * Estilos do Componente Toast (Notificações)
- * 
- * Mantém todos os estilos Tailwind do componente Toast
- */
-
-/* Container do toast */
+/* Toast notifications */
 .toast {
-    position: fixed;
-    top: 1.25rem; /* top-5 */
-    right: 1.25rem; /* right-5 */
-    padding: 0.75rem 1.5rem; /* px-6 py-3 */
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* shadow-lg */
-    z-index: 50; /* z-50 */
-    color: white;
-    font-weight: 500;
-    animation: fadeIn 0.5s ease-out forwards;
+    position: fixed !important;
+    top: 5.5rem !important;
+    right: 1.25rem !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    z-index: 9999 !important;
+    color: white !important;
+    font-weight: 500 !important;
+    animation: fadeIn 0.5s ease-out forwards !important;
 }
 
 .toast.success {
-    background-color: #16a34a; /* bg-green-600 */
+    background-color: #16a34a !important;
 }
 
 .toast.error {
-    background-color: #dc2626; /* bg-red-600 */
+    background-color: #dc2626 !important;
 }
 
 .toast.info {
-    background-color: #2563eb; /* bg-blue-600 */
+    background-color: #2563eb !important;
 }
 
 .toast.warning {
-    background-color: #f59e0b; /* bg-yellow-600 */
+    background-color: #f59e0b !important;
 }
 

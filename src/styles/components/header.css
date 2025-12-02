@@ -1,9 +1,4 @@
-/**
- * Estilos do Componente Header
- * Versão com melhorias de responsividade e acessibilidade
- */
-
-/* Container do header */
+/* Header */
 .header {
     background-color: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(12px);

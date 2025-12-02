@@ -1,9 +1,3 @@
-/**
- * Estilos da Página de Perfil
- * Versão com melhorias de responsividade e acessibilidade
- */
-
-/* Container principal */
 .profile-container {
     max-width: 56rem;
     margin: 0 auto;

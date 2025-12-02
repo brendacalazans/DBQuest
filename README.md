@@ -95,6 +95,17 @@ http://localhost:8080
 
 O projeto está configurado para deploy no GitHub Pages.
 
+## ⚙️ Configuração Opcional
+
+### 🤖 Desafios SQL com IA (Gemini)
+
+O DBQuest possui um recurso de desafios SQL gerados por IA. Para ativá-lo:
+
+1. Obtenha uma chave de API gratuita em [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Siga as instruções detalhadas em [CONFIGURACAO_IA.md](CONFIGURACAO_IA.md)
+
+**Nota:** Este recurso é opcional. O DBQuest funciona normalmente sem ele.
+
 ## 🎓 Como Usar
 
 1. **Cadastre-se** ou faça login
@@ -103,6 +114,7 @@ O projeto está configurado para deploy no GitHub Pages.
 4. **Responda exercícios** para testar conhecimento
 5. **Acompanhe seu progresso** no perfil
 6. **Compete** no ranking global
+7. **[Opcional]** Teste seus conhecimentos com desafios SQL gerados por IA
 
 ## 🤝 Contribuindo
 

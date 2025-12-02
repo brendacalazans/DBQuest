@@ -1,9 +1,3 @@
-/**
- * Estilos da Página Sem Vidas
- * 
- * Mantém todos os estilos Tailwind do componente NoLivesView
- */
-
 /* Container principal */
 .no-lives-container {
     min-height: 100vh;

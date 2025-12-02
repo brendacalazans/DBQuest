@@ -1,9 +1,3 @@
-/**
- * Estilos da Página Home
- * Versão com melhorias de responsividade e acessibilidade
- */
-
-/* Container principal */
 .home-container {
     max-width: 80rem;
     margin: 0 auto;
