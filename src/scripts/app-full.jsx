@@ -2490,7 +2490,7 @@
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
             // Pega a chave do localStorage ou usa a que você mostrou no erro como backup
             const savedKey = localStorage.getItem('dbquest_gemini_api_key');
-            const apiKey = savedKey || "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc"; 
+            const apiKey = savedKey || "AIzaSyBzL-4izSkl0lJlkyL3YOiE3Kg5zO_r9w0"; 
 
             if (!apiKey) throw new Error("Chave de API não encontrada.");
 
