@@ -2486,14 +2486,18 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (CORRIGIDA E ROBUSTA) ---
+        // --- Funções da API Gemini (CORRIGIDA E LIMPA) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            // Tenta pegar a chave salva, ou usa a sua fixa como backup
-            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
-            const apiKey = savedKey || "AIzaSyBff5j5Hp-clNMKTIrvQkebF4UEbFCfJ5c"; 
+            // 1. Tenta pegar a chave salva no navegador
+            const apiKey = localStorage.getItem('dbquest_gemini_api_key');
+
+            // 2. Se não tiver chave salva, lança erro avisando o usuário
+            if (!apiKey) {
+                throw new Error("⚠️ Chave de IA não configurada. Vá no seu Perfil > Editar e cole sua chave do Google AI.");
+            }
             
-            // MUDANÇA: Usamos o endpoint 'gemini-1.5-flash-latest' que é mais seguro contra erros 404
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            // 3. Usa o modelo padrão 'gemini-1.5-flash' (mais estável que o latest)
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
                 try {
@@ -2505,7 +2509,12 @@
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
-                        // Se der erro 404 ou 400, lança erro para tentar o catch
+                        
+                        // Se o erro for de chave inválida/expirada (400 com detalhes específicos)
+                        if (response.status === 400 && JSON.stringify(errorData).includes("API key")) {
+                             throw new Error("Sua chave de API expirou ou é inválida. Gere uma nova.");
+                        }
+
                         throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
 
@@ -2515,31 +2524,13 @@
                     if (candidate && candidate.content?.parts?.[0]?.text) {
                         return candidate.content.parts[0].text;
                     } else {
-                        throw new Error("Resposta da API vazia ou inválida.");
+                        throw new Error("Resposta da IA vazia.");
                     }
                 } catch (error) {
                     console.error(`Tentativa ${i + 1} falhou:`, error);
                     
-                    // Se for a última tentativa, vamos tentar um modelo de BACKUP (gemini-pro) que raramente falha
-                    if (i === retries - 1) {
-                         console.warn("Tentando modelo de backup (gemini-pro)...");
-                         try {
-                            const backupUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-                            const backupResponse = await fetch(backupUrl, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(payload)
-                            });
-                            const backupResult = await backupResponse.json();
-                            const backupCandidate = backupResult.candidates?.[0];
-                            if (backupCandidate && backupCandidate.content?.parts?.[0]?.text) {
-                                return backupCandidate.content.parts[0].text;
-                            }
-                         } catch (backupError) {
-                             console.error("Backup também falhou", backupError);
-                         }
-                         throw error; // Se nem o backup funcionar, lança o erro original
-                    }
+                    // Se for a última tentativa, desiste
+                    if (i === retries - 1) throw error; 
                     
                     await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
                 }
