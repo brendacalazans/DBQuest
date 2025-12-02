@@ -2486,15 +2486,14 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (CORRIGIDA) ---
+        // --- Funções da API Gemini (CORRIGIDA 404) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            // Usa a chave salva no navegador OU a hardcoded como fallback (para teste)
-            // Recomendo usar a do localStorage para segurança, mas deixei a sua hardcoded como backup se não tiver nada salvo.
+            // Usa a chave salva no navegador OU a hardcoded como fallback
             const savedKey = localStorage.getItem('dbquest_gemini_api_key');
             const apiKey = savedKey || "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg"; 
             
-            // CORREÇÃO AQUI: Mudamos para o modelo estável 'gemini-1.5-flash'
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            // MUDANÇA: Usando 'gemini-1.5-flash-latest' para garantir que encontre a versão
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
                 try {
@@ -2506,7 +2505,7 @@
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
-                        // Lança um erro mais detalhado para ajudar no debug
+                        // Lança erro detalhado
                         throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
 
