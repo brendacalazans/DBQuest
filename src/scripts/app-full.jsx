@@ -2486,28 +2486,12 @@
             }
         }, [userId, db]);
 
-        // --- Funções da API Gemini (COM SUA CHAVE NOVA) ---
-        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            
-            // 1. Tenta pegar do perfil (localStorage)
-            const savedKey = localStorage.getItem('dbquest_gemini_api_key');
-            
-            // 2. Se não tiver no perfil, usa a chave que você mandou agora:
-            const apiKey = savedKey || "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc";
+        // --- Funções da API Gemini ---
+        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
+            const apiKey = "AIzaSyChnSD9-dvdoYRzDqoR5hVhywtrbbiKMhg";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-            if (!apiKey) throw new Error("Chave de API não configurada.");
-
-            // Lista de modelos para tentar (do mais novo para o mais compatível)
-            const modelsToTry = [
-                "gemini-1.5-flash",
-                "gemini-1.5-flash-latest",
-                "gemini-pro"
-            ];
-
-            for (const model of modelsToTry) {
-                // Monta a URL com o modelo atual e a SUA chave
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-                
+            for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(apiUrl, {
                         method: 'POST',
@@ -2515,15 +2499,8 @@
                         body: JSON.stringify(payload)
                     });
 
-                    // Se der 404 (Modelo não achado), tenta o próximo da lista
-                    if (response.status === 404) {
-                        console.warn(`Modelo ${model} não encontrado. Tentando o próximo...`);
-                        continue; 
-                    }
-
                     if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
                     const result = await response.json();
@@ -2531,16 +2508,17 @@
 
                     if (candidate && candidate.content?.parts?.[0]?.text) {
                         return candidate.content.parts[0].text;
+                    } else {
+                        throw new Error("Resposta da API inválida.");
                     }
                 } catch (error) {
-                    console.error(`Falha com ${model}:`, error);
-                    // Se foi o último modelo e falhou, desiste
-                    if (model === modelsToTry[modelsToTry.length - 1]) throw error;
+                    console.error(`Tentativa ${i + 1} falhou:`, error);
+                    if (i === retries - 1) throw error; // Lança o erro na última tentativa
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
                 }
             }
-            throw new Error("Falha ao conectar com a IA.");
         }, []);
-        
+
         const getAiExplanation = useCallback(async (question, incorrectAnswer) => {
             setIsAiExplanationLoading(true);
             setAiExplanation('');
@@ -2555,7 +2533,7 @@
 
             try {
                 const payload = { contents: [{ parts: [{ text: prompt }] }] };
-                const explanation = await callGeminiAPI(payload);
+                const explanation = await callGeminiAPI(payload);                const explanation = await callGeminiAPI(payload);
                 setAiExplanation(explanation);
             } catch (error) {
                 console.error("Erro ao buscar explicação da IA:", error);
@@ -2564,7 +2542,7 @@
                 setIsAiExplanationLoading(false);
             }
         }, []);
-        
+
         const generateSqlChallenge = useCallback(async () => {
             setIsChallengeLoading(true);
             setChallenge(null);
