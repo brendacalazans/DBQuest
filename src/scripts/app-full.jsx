@@ -2533,7 +2533,7 @@
 
             try {
                 const payload = { contents: [{ parts: [{ text: prompt }] }] };
-                const explanation = await callGeminiAPI(payload);                const explanation = await callGeminiAPI(payload);
+                const explanation = await callGeminiAPI(payload);                
                 setAiExplanation(explanation);
             } catch (error) {
                 console.error("Erro ao buscar explicação da IA:", error);
