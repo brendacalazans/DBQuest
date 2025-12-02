@@ -2549,7 +2549,7 @@
             setCurrentView('challenge');
 
             const prompt = `Você é um gerador de problemas de SQL para uma plataforma de aprendizado gamificada. Gere um problema de SQL de nível iniciante/intermediário. Siga estritamente o esquema JSON fornecido. A descrição deve apresentar um cenário simples. O esquema SQL deve ser uma única tabela simples. As opções devem incluir uma consulta correta e três consultas incorretas plausíveis. A explicação deve detalhar por que a consulta correta funciona.`;
-            
+
             const schema = {
                 type: "OBJECT",
                 properties: {
@@ -2570,9 +2570,9 @@
                     responseSchema: schema
                 }
             };
-            
+
             try {
-                const responseText = await callGeminiAPI(payload);
+                const responseText = await callGeminiAPI(payload);                const responseText = await callGeminiAPI(payload);
                 const challengeData = JSON.parse(responseText);
                 setChallenge(challengeData);
             } catch (error) {
@@ -2583,11 +2583,11 @@
                 setIsChallengeLoading(false);
             }
         }, []);
-        
+
         const handleSelectTrail = useCallback((trail) => { setSelectedTrail(trail); setCurrentView('trailDetail'); }, []);
         const handleBackToTrails = useCallback(() => { setCurrentView('home'); setSelectedTrail(null); setFilterType('all'); }, []);
         const handleNavigate = useCallback((view) => setCurrentView(view), []);
-
+                                                                                         
         const renderCurrentView = () => {
             if (isChallengeLoading) {
                 return <div className="min-h-screen flex items-center justify-center text-white"><h2 className="text-2xl font-bold">✨ Gerando um novo desafio...</h2></div>;
