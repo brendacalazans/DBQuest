@@ -2488,27 +2488,28 @@
 
         // --- Funções da API Gemini (VERSÃO FINAL DE DEBUG) ---
         const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            // 1. Prioridade: Chave salva no perfil
+            
+            const myHardcodedKey = "AIzaSyCNuaHBNpDatWP4X-73EeO29KgScytufNc"; 
+           
+
+
+            // Lógica: Tenta pegar do navegador. Se não tiver, usa a que você colou acima.
             let apiKey = localStorage.getItem('dbquest_gemini_api_key');
             
-            // 2. Fallback: Se não tiver no perfil, usa esta hardcoded (COLE SUA CHAVE NOVA AQUI)
-            if (!apiKey) {
-                apiKey = "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc"; 
+            if (!apiKey || apiKey.trim() === "") {
+                apiKey = myHardcodedKey;
             }
 
-            // Debug: Mostra no console (parcialmente) qual chave está sendo usada
-            console.log("Usando API Key:", apiKey ? `...${apiKey.slice(-5)}` : "Nenhuma");
-
-            if (!apiKey || apiKey.includes("SUA_NOVA_CHAVE")) {
-                 throw new Error("Chave de API inválida. Configure no Perfil.");
+            // DEBUG: Abre o console (F12) para ver se a chave está sendo lida
+            if (apiKey && !apiKey.includes("COLE_SUA_CHAVE")) {
+                console.log(`✅ Usando chave que termina em: ...${apiKey.slice(-4)}`);
+            } else {
+                console.error("❌ NENHUMA CHAVE VÁLIDA ENCONTRADA!");
+                throw new Error("Configure a chave da API no código ou no perfil.");
             }
 
-            // Lista de modelos atualizada e simplificada
-            const modelsToTry = [
-                "gemini-1.5-flash", // Versão estável atual
-                "gemini-1.5-flash-latest", 
-                "gemini-pro" // Versão legado (backup)
-            ];
+            // Lista de modelos para tentar (Flash é o mais rápido e gratuito)
+            const modelsToTry = ["gemini-1.5-flash", "gemini-pro"];
 
             for (const model of modelsToTry) {
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -2520,39 +2521,37 @@
                         body: JSON.stringify(payload)
                     });
 
-                    // Se funcionar, retorna direto
-                    if (response.ok) {
-                        const result = await response.json();
-                        const candidate = result.candidates?.[0];
-                        if (candidate && candidate.content?.parts?.[0]?.text) {
-                            return candidate.content.parts[0].text;
-                        }
-                    } 
-                    
-                    // Se der erro 404 (Modelo não encontrado/Ativado), loga e tenta o próximo
+                    // Se der erro 404 (Modelo não achado), tenta o próximo
                     if (response.status === 404) {
-                        console.warn(`Modelo ${model} não encontrado (404) ou API não ativada para esta chave.`);
+                        console.warn(`Modelo ${model} não encontrado. Tentando próximo...`);
                         continue; 
                     }
 
-                    // Se der erro 400 (Chave Inválida), para tudo.
+                    // Se der erro de chave (400)
                     if (response.status === 400) {
-                         const errorData = await response.json();
-                         console.error("Erro fatal de chave:", errorData);
-                         throw new Error("Sua Chave de API é inválida ou expirou. Verifique no Google AI Studio.");
+                         const err = await response.json();
+                         console.error("ERRO DE CHAVE:", err);
+                         throw new Error("Chave de API Inválida ou Expirada.");
                     }
 
-                    // Outros erros
-                    throw new Error(`Erro HTTP: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP: ${response.status}`);
+                    }
 
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        return candidate.content.parts[0].text;
+                    }
                 } catch (error) {
-                    console.error(`Falha ao tentar ${model}:`, error);
-                    // Se for o último modelo e falhou, repassa o erro
+                    console.error(`Falha no modelo ${model}:`, error);
                     if (model === modelsToTry[modelsToTry.length - 1]) throw error;
                 }
             }
-            throw new Error("Não foi possível conectar com a IA. Verifique sua chave.");
+            throw new Error("Falha ao conectar com a IA.");
         }, []);
+        
         const getAiExplanation = useCallback(async (question, incorrectAnswer) => {
             setIsAiExplanationLoading(true);
             setAiExplanation('');
