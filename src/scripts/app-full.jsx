@@ -2487,7 +2487,11 @@
         }, [userId, db]);
 
        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            const apiKey = ""
+            let apiKey = localStorage.getItem('dbquest_gemini_api_key');
+            /*if (!apiKey) {
+                // Pega do arquivo .env
+                apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
+            }*/
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
