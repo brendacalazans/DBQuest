@@ -2487,7 +2487,7 @@
         }, [userId, db]);
 
        const callGeminiAPI = useCallback(async (payload, retries = 3, delay = 1000) => {
-            const apiKey = "AIzaSyCM2J5xASXRUmh3CGjgxO3xCOrbe8zN1Fc";
+            const apiKey = ""
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             for (let i = 0; i < retries; i++) {
